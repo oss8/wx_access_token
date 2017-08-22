@@ -8,7 +8,7 @@ module.exports = function (server) {
 
   var utils = require('../../common/models/utils')
   var config = require('../../config/config');
-  var wechatApi = require('../../common/models/wechatApi')
+  var wechatApi = require('../../common/models/wechatapi')
   router.use(function (req, res, next) {
 
     //根据token从redis中获取access_token  

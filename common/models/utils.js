@@ -1,7 +1,4 @@
 
-
-
-
 var utils = {};
 var sha1 = require('sha1');
 var request = require('request');

@@ -28,9 +28,9 @@ module.exports = function (server) {
       if (!data.expires_in) {
         console.log('redis获取到值');
         var p = {"access_token":data};
-        res.writeHead(200,{"json":true});
-        res.write(JSON.stringify(p));
-        res.end();//next();  
+        //res.writeHead(200,{"json":true});
+        res.send(p);
+        //res.end();//next();  
       }
       //有expire_in值--此data是微信端获取到的  
       else {
@@ -43,8 +43,7 @@ module.exports = function (server) {
           if (result == 'OK') {
 
             res.writeHead(200,{"json":true});
-            res.write(JSON.stringify(data));
-            res.end();//next();  
+            res.send(data); 
           }
         })
       }

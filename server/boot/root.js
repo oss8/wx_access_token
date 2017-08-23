@@ -45,8 +45,7 @@ module.exports = function (server) {
         var p = {"access_token":data};
 
         if ( !_.isUndefined(data.errcode)){
-          res.writeHead(403,data); 
-          res.end();
+          res.send(data); 
         }else{
           res.send(p); 
         }
@@ -64,8 +63,7 @@ module.exports = function (server) {
 
             //res.writeHead(200,{"json":true});
             if ( !_.isUndefined(data.errcode)){
-              res.writeHead(403,data); 
-              res.end();
+              res.send(data); 
             }else{
               res.send(data); 
             }
@@ -74,9 +72,6 @@ module.exports = function (server) {
         })
       }
 
-    },function(err){
-      var p = {"error message:":err.message};
-      res.send(p);
     })
   })
 };

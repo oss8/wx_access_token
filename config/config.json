@@ -7,5 +7,14 @@
             "grant_type": "client_credential",
             "token": "mankang-health"
         }
-    }
+    },
+    {
+        "wechat": {
+            "appID": "1232411221",
+            "appSecret": "57e9a3e879a08b817e1163a20e767ca3",
+            "prefix": "https://api.weixin.qq.com/cgi-bin/",
+            "grant_type": "client_credential",
+            "token": "test-health1"
+        }
+    }    
 ]

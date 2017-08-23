@@ -22,7 +22,10 @@ module.exports = function (server) {
       return item.wechat.appID == appId;
     })
 
-
+    if ( _.isUndefined(config)){
+      var p = {"error message": "AppID is not find"};
+      res.send(p);      
+    }
 
     utils.get(config.wechat.token).then(function (data) {
       //获取到值--往下传递  
@@ -39,6 +42,10 @@ module.exports = function (server) {
       if (!data.expires_in) {
         console.log('redis获取到值');
         var p = {"access_token":data};
+        if ( !_.isUndefined(data.errcode)){
+          p = data;
+        }
+        
         //res.writeHead(200,{"json":true});
         res.send(p);
         //res.end();//next();  
@@ -54,11 +61,18 @@ module.exports = function (server) {
           if (result == 'OK') {
 
             //res.writeHead(200,{"json":true});
-            res.send(data); 
+            var p = {"access_token":data};
+            if ( !_.isUndefined(data.errcode)){
+              p = data;
+            }
+            res.send(p); 
           }
         })
       }
 
+    },function(err){
+      var p = {"error message:":err.message};
+      res.send(p);
     })
   })
 };

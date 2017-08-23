@@ -23,8 +23,9 @@ module.exports = function (server) {
     })
 
     if ( _.isUndefined(config)){
-      var p = {"error message": "AppID is not find"};
-      res.send(p);      
+      res.writeHead(403,{"message":"AppID is not find"}); 
+      res.end();
+      return;
     }
 
     utils.get(config.wechat.token).then(function (data) {
@@ -42,12 +43,13 @@ module.exports = function (server) {
       if (!data.expires_in) {
         console.log('redis获取到值');
         var p = {"access_token":data};
+
         if ( !_.isUndefined(data.errcode)){
-          p = data;
+          res.writeHead(403,data); 
+          res.end();
+        }else{
+          res.send(p); 
         }
-        
-        //res.writeHead(200,{"json":true});
-        res.send(p);
         //res.end();//next();  
       }
       //有expire_in值--此data是微信端获取到的  
@@ -63,9 +65,12 @@ module.exports = function (server) {
             //res.writeHead(200,{"json":true});
             var p = {"access_token":data};
             if ( !_.isUndefined(data.errcode)){
-              p = data;
+              res.writeHead(403,data); 
+              res.end();
+            }else{
+              res.send(p); 
             }
-            res.send(p); 
+            
           }
         })
       }

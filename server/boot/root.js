@@ -5,13 +5,24 @@ module.exports = function (server) {
   var router = server.loopback.Router();
   router.get('/', server.loopback.status());
   server.use(router);
+  var _ = require('underscore');
 
   var utils = require('../../common/models/utils')
-  var config = require('../../config/config');
+  var configs = require('../../config/config');
   var wechatApi = require('../../common/models/wechatapi')
   router.use(function (req, res, next) {
 
     //根据token从redis中获取access_token  
+    var appId = req.query.appId;
+    if ( _.isUndefined(appId)){
+      appId = 'wx397644d24ec87fd1';
+    }
+
+    var config = _.find(configs, function(item){
+      return item.wechat.appID == appId;
+    })
+
+
 
     utils.get(config.wechat.token).then(function (data) {
       //获取到值--往下传递  
@@ -20,7 +31,7 @@ module.exports = function (server) {
       }
       //没获取到值--从微信服务器端获取,并往下传递  
       else {
-        return wechatApi.updateAccessToken();
+        return wechatApi.updateAccessToken(appId);
       }
     }).then(function (data) {
       console.log(data);
@@ -42,7 +53,7 @@ module.exports = function (server) {
         utils.set(config.wechat.token, `${data.access_token}`, 7180).then(function (result) {
           if (result == 'OK') {
 
-            res.writeHead(200,{"json":true});
+            //res.writeHead(200,{"json":true});
             res.send(data); 
           }
         })

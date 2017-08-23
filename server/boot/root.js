@@ -63,12 +63,11 @@ module.exports = function (server) {
           if (result == 'OK') {
 
             //res.writeHead(200,{"json":true});
-            var p = {"access_token":data};
             if ( !_.isUndefined(data.errcode)){
               res.writeHead(403,data); 
               res.end();
             }else{
-              res.send(p); 
+              res.send(data); 
             }
             
           }

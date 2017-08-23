@@ -23,7 +23,7 @@ module.exports = function (server) {
     })
 
     if ( _.isUndefined(config)){
-      res.writeHead(403,{"message":"AppID is not find"}); 
+      res.writeHead(403,{"errcode":100001, "errmsg":"AppID is not find"}); 
       res.end();
       return;
     }

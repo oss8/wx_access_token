@@ -30,7 +30,7 @@ wechatApi.updateAccessToken = function (appId) {
         utils.request(option).then(function (data) {
 
             resolve(data);
-        },function(err){
+        }, function (err) {
             reject(err);
         })
     });

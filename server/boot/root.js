@@ -94,6 +94,8 @@ module.exports = function (server) {
         };
 
         res.send(Data);
+      }else{
+        res.send(resp);
       }
     })
   }

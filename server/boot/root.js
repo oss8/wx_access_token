@@ -20,7 +20,9 @@ module.exports = function (server) {
       getToken(req, res, next);
     } else if (req.path == '/ticket') {
       getTicket(req, res, next)
-    } 
+    } else {
+      next();
+    }
 
   })
 
@@ -63,7 +65,7 @@ module.exports = function (server) {
         console.log('getTicket redis中无值');
         utils.set(config.wechat.token, `${data.access_token}`, 7180).then(function (result) {
           if (result == 'OK') {
-            _getTicket(res, req, next, appId, date.access_token, url)
+            _getTicket(res, req, next, appId, data.access_token, url)
           }
         })
       }

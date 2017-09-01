@@ -34,6 +34,12 @@ module.exports = function (server) {
       appId = 'wx397644d24ec87fd1';
     }
 
+    if (_.isUndefined(url)) {
+      res.writeHead(403, { "errcode": 100002, "errmsg": "url is Empty" });
+      res.end();
+      return;
+    }    
+
     var config = _.find(configs, function (item) {
       return item.wechat.appID == appId;
     })

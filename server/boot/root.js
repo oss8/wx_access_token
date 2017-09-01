@@ -51,34 +51,26 @@ module.exports = function (server) {
     }
 
     utils.get(config.wechat.token).then(function (data) {
-      //获取到值--往下传递  
-      if (data) {
-        return Promise.resolve(data);
-      }
-      //没获取到值--从微信服务器端获取,并往下传递  
-      else {
-        return wechatApi.updateAccessToken(appId);
-      }
-    }).then(function (data) {
-      console.log(data);
-      //没有expire_in值--此data是redis中获取到的  
-      if (!data.expires_in) {
+      
+      if (data) { //获取到值--往下传递  
         console.log('getTicket redis获取到值');
-        _getTicket(res, req, next, appId, data, url)
+        _getTicket(res, appId, data, url)
       }
-      //有expire_in值--此data是微信端获取到的  
-      else {
-        console.log('getTicket redis中无值');
-        utils.set(config.wechat.token, `${data.access_token}`, 7180).then(function (result) {
-          if (result == 'OK') {
-            _getTicket(res, req, next, appId, data.access_token, url)
-          }
+      else {  //没获取到值--从微信服务器端获取,并往下传递  
+        wechatApi.updateAccessToken(appId).then(function(accessData){
+
+          console.log('getTicket redis中无值');
+          utils.set(config.wechat.token, `${accessData.access_token}`, 7180).then(function (result) {
+            if (result == 'OK') {
+              _getTicket(res, appId, accessData.access_token, url)
+            }
+          })
         })
       }
     });
   }
 
-  function _getTicket(res, req, next, appId, access_token, url) {
+  function _getTicket(res, appId, access_token, url) {
 
     var winxinconfig = {
       grant_type: 'client_credential',
@@ -106,8 +98,6 @@ module.exports = function (server) {
     })
   }
 
-
-
   function getToken(req, res, next) {
     //根据token从redis中获取access_token  
     var appId = req.query.appId;
@@ -126,49 +116,26 @@ module.exports = function (server) {
     }
 
     utils.get(config.wechat.token).then(function (data) {
-      //获取到值--往下传递  
-      if (data) {
-        return Promise.resolve(data);
-      }
-      //没获取到值--从微信服务器端获取,并往下传递  
-      else {
-        return wechatApi.updateAccessToken(appId);
-      }
-    }).then(function (data) {
-      console.log(data);
-      //没有expire_in值--此data是redis中获取到的  
-      if (!data.expires_in) {
+      
+      if (data) { //获取到值--往下传递  
         console.log('redis获取到值');
         var p = { "access_token": data };
-
-        if (!_.isUndefined(data.errcode)) {
-          res.send(data);
-        } else {
-          res.send(p);
-        }
-        //res.end();//next();  
+        res.send(p);
       }
-      //有expire_in值--此data是微信端获取到的  
-      else {
+      else {        //没获取到值--从微信服务器端获取,并往下传递  
         console.log('redis中无值');
-        /** 
-         * 保存到redis中,由于微信的access_token是7200秒过期, 
-         * 存到redis中的数据减少20秒,设置为7180秒过期 
-         */
-        utils.set(config.wechat.token, `${data.access_token}`, 7180).then(function (result) {
-          if (result == 'OK') {
-
-            //res.writeHead(200,{"json":true});
-            if (!_.isUndefined(data.errcode)) {
-              res.send(data);
-            } else {
-              res.send(data);
+        wechatApi.updateAccessToken(appId).then(function(data){
+          utils.set(config.wechat.token, `${data.access_token}`, 7180).then(function (result) {
+            if (result == 'OK') {
+                res.send(data);
             }
-
-          }
+            else{
+              res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });
+              res.end();              
+            }
+          })
         })
       }
-
     })
   }
 };

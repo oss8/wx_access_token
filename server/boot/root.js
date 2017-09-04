@@ -73,7 +73,7 @@ module.exports = function (server) {
             }
         });
     }
-
+ 
     function _getTicket(res, appId, access_token, url) {
 
         var winxinconfig = {

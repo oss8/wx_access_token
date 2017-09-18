@@ -57,8 +57,8 @@ Common.self_sendNotify = function (res, access_token, openId, context) {
 
         if (!error) {
             console.log(resp.body);
-            if (_.isUndefined(body.errcode)) {
-                res.send(body);
+            if (_.isUndefined(resp.body.errcode)) {
+                res.send(resp.body);
             } else {
                 res.writeHead(403, resp.body);
                 res.end(JSON.stringify(resp.body));

@@ -40,6 +40,32 @@ Common.self_getToken = function (token, appId) {
     });
 }
 
+Common.self_sendNotify = function (res, access_token, openId, context) {
+
+    var url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + access_token;
+
+    var SendData = {
+        "touser": openId,
+        "msgtype": "text",
+        "text":
+        {
+            "content": context
+        }
+    };
+
+    needle.post(encodeURI(url), SendData, { json: true }, function (error, resp) {
+
+        if (!error) {
+
+            res.send(resp);
+        } else {
+            res.writeHead(403, error);
+            res.end(JSON.stringify(error));
+        }
+
+    })
+}
+
 Common.self_getNickName = function (res, access_token, openId) {
 
     request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + "&openid=" + openId + "&lang=zh_CN", function (error, resp, json) {
@@ -47,13 +73,13 @@ Common.self_getNickName = function (res, access_token, openId) {
         if (!error && resp.statusCode == 200) {
             var body = JSON.parse(json);
             console.log(body);
-            if ( _.isUndefined(body.errcode)){
+            if (_.isUndefined(body.errcode)) {
                 res.send(body);
-            }else{
+            } else {
                 res.writeHead(403, body);
                 res.end(JSON.stringify(body));
             }
-            
+
         } else {
             res.send(resp);
         }

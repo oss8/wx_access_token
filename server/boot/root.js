@@ -16,7 +16,7 @@ module.exports = function (server) {
         var appId = req.query.appId;
         if (_.isUndefined(appId)) {
             appId = 'wx397644d24ec87fd1';
-        }        
+        }
 
         var config = _.find(configs, function (item) {
             return item.wechat.appID == appId;
@@ -35,11 +35,34 @@ module.exports = function (server) {
         } else if (req.path == '/ticket') {
 
             getTicket(req, res, next, config)
+        } else if (req.path == '/qrcode') {
+
+            getQRCode(req, res, next, config)
         } else {
             next();
         }
 
     })
+
+    function getQRCode(req, res, next, config) {
+        //根据token从redis中获取access_token  
+        var appId = req.query.appId;
+        var QRCode = req.query.QRCode;
+        if (_.isUndefined(QRCode)) {
+            console.log("403, QRCode is Empty");
+            res.writeHead(403, { "errcode": 100002, "errmsg": "QRCode is Empty" });
+            res.end("QRCode is Empty");
+            return;
+        }
+        common.self_getToken(config.wechat.token, appId).then(function (data) {
+            common.self_getQRCode(res, data.access_token, QRCode)
+        }, function (err) {
+            res.writeHead(500, err);
+            res.end();
+        });
+
+    }
+
 
     function getTicket(req, res, next, config) {
         var appId = req.query.appId;
@@ -49,13 +72,13 @@ module.exports = function (server) {
             res.writeHead(403, { "errcode": 100002, "errmsg": "url is Empty" });
             res.end("url is Empty");
             return;
-        }  
+        }
 
-        common.self_getToken(config.wechat.token, appId).then(function(data){
-            common.self_getTicket(res, appId, data.access_token, url)
-        },function(err){
+        common.self_getToken(config.wechat.token, appId).then(function (data) {
+            common.self_getTicket(res, data.access_token, url)
+        }, function (err) {
             res.writeHead(500, err);
-            res.end();            
+            res.end();
         });
     }
 
@@ -64,11 +87,11 @@ module.exports = function (server) {
         //根据token从redis中获取access_token  
         var appId = req.query.appId;
 
-        common.self_getToken(config.wechat.token, appId).then(function(data){
+        common.self_getToken(config.wechat.token, appId).then(function (data) {
             res.send(data);
-        },function(err){
+        }, function (err) {
             res.writeHead(500, err);
-            res.end();            
+            res.end();
         });
 
     }

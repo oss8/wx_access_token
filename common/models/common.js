@@ -39,7 +39,7 @@ Common.self_getToken = function (token, appId) {
 }
 
 
-Common.self_getTicket = function (res, appId, access_token, url) {
+Common.self_getTicket = function (res, access_token, url) {
 
     var winxinconfig = {
         grant_type: 'client_credential',
@@ -67,4 +67,20 @@ Common.self_getTicket = function (res, appId, access_token, url) {
     })
 }
 
+Common.self_getQRCode = function(res, access_token, strQR){
+
+    var pp = { "expire_seconds": 604800, "action_name": "QR_STR_SCENE", "action_info": { "scene": { "scene_str": strQR } } };
+    var url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + access_token;
+    needle.post(encodeURI(url), pp, { json: true }, function (err, resp) {
+        // you can pass params as a string or as an object.
+        if (err) {
+            res.writeHead(500, err);
+            res.end(err.message);
+        }
+        else {
+            EWTRACE(resp.body.url);
+            res.send(resp.body.url);
+        }
+    });
+}
 module.exports = Common;

@@ -59,7 +59,7 @@ module.exports = function (server) {
     function GetTokenFromOpenID(req, res, next) {
         //根据token从redis中获取access_token  
 
-        Common.GetTokenFromOpenID(req.body).then(function(data){
+        common.GetTokenFromOpenID(req.body).then(function(data){
             res.send(data);
         },function(err){
             res.writeHead(500, err);
@@ -77,7 +77,7 @@ module.exports = function (server) {
             res.end("token is Empty");
             return;
         }
-        Common.GetOpenIDFromToken(token).then(function(data){
+        common.GetOpenIDFromToken(token).then(function(data){
             res.send(data);
         },function(err){
             res.writeHead(500, err);

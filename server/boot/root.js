@@ -25,7 +25,7 @@ module.exports = function (server) {
         if (_.isUndefined(config)) {
             console.log("403, AppID is not find");
             res.writeHead(403, { "errcode": 100001, "errmsg": "AppID is not find" });
-            res.end();
+            res.end("AppID is not find");
             return;
         }
 

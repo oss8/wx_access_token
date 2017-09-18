@@ -4,7 +4,8 @@ var Common = {};
 var utils = require('../../common/models/utils')
 var configs = require('../../config/config');
 var wechatApi = require('../../common/models/wechatapi');
-
+var request = require('request');
+var sha1 = require('sha1');
 
 Common.self_getToken = function (token, appId) {
     return new Promise(function (resolve, reject) {
@@ -46,7 +47,7 @@ Common.self_getTicket = function (res, appId, access_token, url) {
         ticketUrl: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
-    var request = require('request');
+
     request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function (error, resp, json) {
         if (!error && resp.statusCode == 200) {
             var ticketMap = JSON.parse(json);

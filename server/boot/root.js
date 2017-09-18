@@ -44,10 +44,10 @@ module.exports = function (server) {
         } else if (req.path == '/sendnotify') {
 
             sendNotify(req, res, next, config)
-        } else if (req.path == '/getToken') {
+        } else if (req.path == '/gettoken') {
 
             getToken(req, res, next)
-        } else if (req.path == '/GetOpenID') {
+        } else if (req.path == '/getopenid') {
 
             getOpenId(req, res, next)
         } else {

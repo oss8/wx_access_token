@@ -59,11 +59,11 @@ module.exports = function (server) {
     var parsePostBody = function (req, done) {
         var arr = [];
         var chunks;
-    
+
         req.on('data', buff => {
             arr.push(buff);
         });
-    
+
         req.on('end', () => {
             chunks = Buffer.concat(arr);
             done(chunks);
@@ -75,14 +75,14 @@ module.exports = function (server) {
 
         parsePostBody(req, (chunks) => {
             var body = JSON.parse(chunks.toString());
-            common.GetTokenFromOpenID(body).then(function(data){
+            common.GetTokenFromOpenID(body).then(function (data) {
                 res.send(data);
-            },function(err){
+            }, function (err) {
                 res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
                 res.end(err.message);
-            });            
+            });
         });
-    
+
 
     }
 
@@ -96,14 +96,17 @@ module.exports = function (server) {
             res.end("token is Empty");
             return;
         }
-        common.GetOpenIDFromToken(token).then(function(data){
+
+        try {
+            var data = common.GetOpenIDFromToken(token);
             res.send(data);
-        },function(err){
-            res.writeHead(500, err);
+
+        } catch (err) {
+            res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
             res.end(err.message);
-        });
-        
-    }    
+        };
+
+    }
 
 
     function sendNotify(req, res, next, config) {

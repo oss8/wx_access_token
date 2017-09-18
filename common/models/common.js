@@ -39,6 +39,18 @@ Common.self_getToken = function (token, appId) {
     });
 }
 
+Common.self_getNickName = function (res, access_token, openId) {
+
+    request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + "&openid=" + openId + "&lang=zh_CN", function (error, resp, json) {
+
+        if (!error && resp.statusCode == 200) {
+            var body = JSON.parse(json);
+            res.send(body);
+        } else {
+            res.send(resp);
+        }
+    })
+}
 
 Common.self_getTicket = function (res, access_token, url) {
 
@@ -68,7 +80,7 @@ Common.self_getTicket = function (res, access_token, url) {
     })
 }
 
-Common.self_getQRCode = function(res, access_token, strQR){
+Common.self_getQRCode = function (res, access_token, strQR) {
 
     var pp = { "expire_seconds": 604800, "action_name": "QR_STR_SCENE", "action_info": { "scene": { "scene_str": strQR } } };
     var url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + access_token;

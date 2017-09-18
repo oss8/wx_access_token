@@ -38,11 +38,33 @@ module.exports = function (server) {
         } else if (req.path == '/qrcode') {
 
             getQRCode(req, res, next, config)
+        } else if (req.path == '/nickname') {
+
+            getNickName(req, res, next, config)
         } else {
             next();
         }
 
     })
+
+    function getNickName(req, res, next, config) {
+        //根据token从redis中获取access_token  
+        var appId = req.query.appId;
+        var openid = req.query.openid;
+        if (_.isUndefined(QRCode)) {
+            console.log("403, openid is Empty");
+            res.writeHead(403, { "errcode": 100002, "errmsg": "openid is Empty" });
+            res.end("openid is Empty");
+            return;
+        }
+        common.self_getToken(config.wechat.token, appId).then(function (data) {
+            common.self_getNickName(res, data.access_token, QRCode)
+        }, function (err) {
+            res.writeHead(500, err);
+            res.end();
+        });
+
+    }
 
     function getQRCode(req, res, next, config) {
         //根据token从redis中获取access_token  

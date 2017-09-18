@@ -41,11 +41,43 @@ module.exports = function (server) {
         } else if (req.path == '/nickname') {
 
             getNickName(req, res, next, config)
+        } else if (req.path == '/sendnotify') {
+
+            sendNotify(req, res, next, config)
         } else {
             next();
         }
 
     })
+
+    function sendNotify(req, res, next, config) {
+        //根据token从redis中获取access_token  
+        var appId = req.query.appId;
+        var openid = req.query.openid;
+        var context = req.query.context;
+
+        if (_.isUndefined(openid)) {
+            console.log("403, openid is Empty");
+            res.writeHead(403, { "errcode": 100002, "errmsg": "openid is Empty" });
+            res.end("openid is Empty");
+            return;
+        }
+
+        if ( _.isUndefined(context)){
+            console.log("403, context is Empty");
+            res.writeHead(403, { "errcode": 100002, "errmsg": "context is Empty" });
+            res.end("context is Empty");
+            return;            
+        }
+
+        common.self_getToken(config.wechat.token, appId).then(function (data) {
+            common.self_getNickName(res, data.access_token, openid, context)
+        }, function (err) {
+            res.writeHead(500, err);
+            res.end();
+        });
+
+    }    
 
     function getNickName(req, res, next, config) {
         //根据token从redis中获取access_token  

@@ -57,7 +57,7 @@ Common.self_sendNotify = function (res, access_token, openId, context) {
 
         if (!error) {
 
-            res.writeHead(200, resp);
+            res.send(resp);
         } else {
             res.writeHead(403, error);
             res.end(JSON.stringify(error));

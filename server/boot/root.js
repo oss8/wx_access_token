@@ -71,7 +71,7 @@ module.exports = function (server) {
         }
 
         common.self_getToken(config.wechat.token, appId).then(function (data) {
-            common.self_getNickName(res, data.access_token, openid, context)
+            common.self_sendNotify(res, data.access_token, openid, context)
         }, function (err) {
             res.writeHead(500, err);
             res.end();

@@ -10,6 +10,7 @@ module.exports = function (server) {
     var utils = require('../../common/models/utils')
     var configs = require('../../config/config');
     var wechatApi = require('../../common/models/wechatapi')
+    var common = require('../../common/models/common')
 
     var request = require('request');
     var sha1 = require('sha1');
@@ -50,8 +51,8 @@ module.exports = function (server) {
             return;
         }
 
-        self_getToken(config.wechat.token, appId).then(function(data){
-            _getTicket(res, appId, data.access_token, url)
+        common.self_getToken(config.wechat.token, appId).then(function(data){
+            common._getTicket(res, appId, data.access_token, url)
         },function(err){
             res.writeHead(500, err);
             res.end();            
@@ -99,7 +100,7 @@ module.exports = function (server) {
             res.end();
             return;
         }
-        self_getToken(config.wechat.token, appId).then(function(data){
+        common.self_getToken(config.wechat.token, appId).then(function(data){
             res.send(data);
         },function(err){
             res.writeHead(500, err);

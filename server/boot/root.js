@@ -46,17 +46,17 @@ module.exports = function (server) {
             sendNotify(req, res, next, config)
         } else if (req.path == '/encrypt') {
 
-            getToken(req, res, next)
+            GetTokenFromOpenID(req, res, next)
         } else if (req.path == '/decrypt') {
 
-            getOpenId(req, res, next)
+            GetOpenIDFromToken(req, res, next)
         } else {
             next();
         }
 
     })
 
-    function getToken(req, res, next) {
+    function GetTokenFromOpenID(req, res, next) {
         //根据token从redis中获取access_token  
 
         Common.GetTokenFromOpenID(req.body).then(function(data){
@@ -67,7 +67,7 @@ module.exports = function (server) {
         });
     }
 
-    function getOpenId(req, res, next, config) {
+    function GetOpenIDFromToken(req, res, next, config) {
         //根据token从redis中获取access_token  
 
         var token = req.query.token;

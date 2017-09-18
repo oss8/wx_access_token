@@ -23,6 +23,7 @@ module.exports = function (server) {
         })
 
         if (_.isUndefined(config)) {
+            console.log("403, AppID is not find");
             res.writeHead(403);
             res.end(JSON.stringify({ "errcode": 100001, "errmsg": "AppID is not find" }));
             return;
@@ -44,6 +45,7 @@ module.exports = function (server) {
         var appId = req.query.appId;
         var url = req.query.url;
         if (_.isUndefined(url)) {
+            console.log("403, url is Empty");
             res.writeHead(403);
             res.end(JSON.stringify({ "errcode": 100002, "errmsg": "url is Empty" }));
             return;

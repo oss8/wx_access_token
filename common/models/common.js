@@ -56,7 +56,7 @@ Common.self_sendNotify = function (res, access_token, openId, context) {
     needle.post(encodeURI(url), SendData, { json: true }, function (error, resp) {
 
         if (!error) {
-
+            console.log(resp);
             res.send(resp);
         } else {
             res.writeHead(403, error);

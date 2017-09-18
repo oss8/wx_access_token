@@ -38,7 +38,7 @@ Common.self_getToken = function (token, appId) {
 }
 
 
-Common._getTicket = function (res, appId, access_token, url) {
+Common.self_getTicket = function (res, appId, access_token, url) {
 
     var winxinconfig = {
         grant_type: 'client_credential',

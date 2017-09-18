@@ -80,7 +80,7 @@ Common.self_getQRCode = function(res, access_token, strQR){
             res.end(err.message);
         }
         else {
-            EWTRACE(resp.body.url);
+            console.log(resp.body.url);
             res.send(resp.body.url);
         }
     });

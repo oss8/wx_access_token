@@ -8,8 +8,10 @@ var request = require('request');
 var sha1 = require('sha1');
 var needle = require('needle');
 var _ = require('underscore');
-var jwt = require('jwt-simple');
+var jwtdecode = require('jwt-simple');
 var rf = require("fs");
+var jwt = require('jsonwebtoken');
+
 
 Common.GetTokenFromOpenID = function (userinfo) {
     delete userinfo.exp;
@@ -27,13 +29,13 @@ Common.GetTokenFromOpenID = function (userinfo) {
 }
 
 Common.GetOpenIDFromToken = function (token) {
-    var jwt = require('jwt-simple');
+    
     var rf = require("fs");
     var secret = rf.readFileSync("jwt_rsa_public_key.pem", "utf-8");
     var decoded = null;
     try {
-        decoded = jwt.decode(token, secret);
-        EWTRACEIFY(decoded);
+        decoded = jwtdecode.decode(token, secret);
+        console.log(decoded);
         return decoded;
     } catch (err) {
         throw (err);

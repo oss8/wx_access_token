@@ -56,15 +56,34 @@ module.exports = function (server) {
 
     })
 
-    function GetTokenFromOpenID(req, res, next) {
-        //根据token从redis中获取access_token  
-
-        common.GetTokenFromOpenID(req.body).then(function(data){
-            res.send(data);
-        },function(err){
-            res.writeHead(500, err);
-            res.end(err.message);
+    var parsePostBody = function (req, done) {
+        var arr = [];
+        var chunks;
+    
+        req.on('data', buff => {
+            arr.push(buff);
         });
+    
+        req.on('end', () => {
+            chunks = Buffer.concat(arr);
+            done(chunks);
+        });
+    };
+
+    function GetTokenFromOpenID(req, res, next) {
+        //根据token从redis中获取access_token 
+
+        parsePostBody(req, (chunks) => {
+            var body = JSON.parse(chunks.toString());
+            common.GetTokenFromOpenID(body).then(function(data){
+                res.send(data);
+            },function(err){
+                res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+                res.end(err.message);
+            });            
+        });
+    
+
     }
 
     function GetOpenIDFromToken(req, res, next, config) {

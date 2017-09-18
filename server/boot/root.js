@@ -44,11 +44,48 @@ module.exports = function (server) {
         } else if (req.path == '/sendnotify') {
 
             sendNotify(req, res, next, config)
+        } else if (req.path == '/getToken') {
+
+            getToken(req, res, next)
+        } else if (req.path == '/GetOpenID') {
+
+            getOpenId(req, res, next)
         } else {
             next();
         }
 
     })
+
+    function getToken(req, res, next) {
+        //根据token从redis中获取access_token  
+
+        Common.GetTokenFromOpenID(req.body).then(function(data){
+            res.send(data);
+        },function(err){
+            res.writeHead(500, err);
+            res.end(err.message);
+        });
+    }
+
+    function getOpenId(req, res, next, config) {
+        //根据token从redis中获取access_token  
+
+        var token = req.query.token;
+        if (_.isUndefined(token)) {
+            console.log("403, token is Empty");
+            res.writeHead(403, { "errcode": 100002, "errmsg": "token is Empty" });
+            res.end("token is Empty");
+            return;
+        }
+        Common.GetOpenIDFromToken(token).then(function(data){
+            res.send(data);
+        },function(err){
+            res.writeHead(500, err);
+            res.end(err.message);
+        });
+        
+    }    
+
 
     function sendNotify(req, res, next, config) {
         //根据token从redis中获取access_token  
@@ -63,11 +100,11 @@ module.exports = function (server) {
             return;
         }
 
-        if ( _.isUndefined(context)){
+        if (_.isUndefined(context)) {
             console.log("403, context is Empty");
             res.writeHead(403, { "errcode": 100002, "errmsg": "context is Empty" });
             res.end("context is Empty");
-            return;            
+            return;
         }
 
         common.self_getToken(config.wechat.token, appId).then(function (data) {
@@ -77,7 +114,7 @@ module.exports = function (server) {
             res.end();
         });
 
-    }    
+    }
 
     function getNickName(req, res, next, config) {
         //根据token从redis中获取access_token  

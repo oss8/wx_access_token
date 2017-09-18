@@ -8,6 +8,37 @@ var request = require('request');
 var sha1 = require('sha1');
 var needle = require('needle');
 var _ = require('underscore');
+var jwt = require('jwt-simple');
+var rf = require("fs");
+
+Common.GetTokenFromOpenID = function (userinfo) {
+    delete userinfo.exp;
+    
+    var cert = rf.readFileSync("jwt_rsa_private_key.pem", "utf-8");
+    return new Promise(function (resolve, reject) {
+        jwt.sign(userinfo, cert, { algorithm: 'RS256', expiresIn: '1d' }, function (err, token) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(token);
+            }
+        });
+    });
+}
+
+Common.GetOpenIDFromToken = function (token) {
+    var jwt = require('jwt-simple');
+    var rf = require("fs");
+    var secret = rf.readFileSync("jwt_rsa_public_key.pem", "utf-8");
+    var decoded = null;
+    try {
+        decoded = jwt.decode(token, secret);
+        EWTRACEIFY(decoded);
+        return decoded;
+    } catch (err) {
+        throw (err);
+    }
+}
 
 Common.self_getToken = function (token, appId) {
     return new Promise(function (resolve, reject) {

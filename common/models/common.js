@@ -7,6 +7,7 @@ var wechatApi = require('../../common/models/wechatapi');
 var request = require('request');
 var sha1 = require('sha1');
 var needle = require('needle');
+var _ = require('underscore');
 
 Common.self_getToken = function (token, appId) {
     return new Promise(function (resolve, reject) {

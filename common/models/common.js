@@ -47,6 +47,7 @@ Common.self_getNickName = function (res, access_token, openId) {
             var body = JSON.parse(json);
             res.send(body);
         } else {
+            res.writeHead(500,resp)
             res.send(resp);
         }
     })
@@ -75,6 +76,7 @@ Common.self_getTicket = function (res, access_token, url) {
 
             res.send(Data);
         } else {
+            res.writeHead(500,resp)
             res.send(resp);
         }
     })

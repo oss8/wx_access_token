@@ -12,9 +12,6 @@ module.exports = function (server) {
     var wechatApi = require('../../common/models/wechatapi')
     var common = require('../../common/models/common')
 
-    var request = require('request');
-    var sha1 = require('sha1');
-
     router.use(function (req, res, next) {
         var appId = req.query.appId;
         if (_.isUndefined(appId)) {
@@ -26,8 +23,8 @@ module.exports = function (server) {
         })
 
         if (_.isUndefined(config)) {
-            res.writeHead(403, { "errcode": 100001, "errmsg": "AppID is not find" });
-            res.end();
+            res.writeHead(403);
+            res.end(JSON.stringify({ "errcode": 100001, "errmsg": "AppID is not find" }));
             return;
         }
 
@@ -47,8 +44,8 @@ module.exports = function (server) {
         var appId = req.query.appId;
         var url = req.query.url;
         if (_.isUndefined(url)) {
-            res.writeHead(403, { "errcode": 100002, "errmsg": "url is Empty" });
-            res.end();
+            res.writeHead(403);
+            res.end(JSON.stringify({ "errcode": 100002, "errmsg": "url is Empty" }));
             return;
         }  
 

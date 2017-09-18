@@ -36,5 +36,9 @@
   "wechatapi": {
     "dataSource": "db",
     "public": true
+  },
+  "common": {
+    "dataSource": "db",
+    "public": true
   }
 }

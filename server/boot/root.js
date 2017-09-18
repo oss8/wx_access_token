@@ -51,7 +51,7 @@ module.exports = function (server) {
         //根据token从redis中获取access_token  
         var appId = req.query.appId;
         var openid = req.query.openid;
-        if (_.isUndefined(QRCode)) {
+        if (_.isUndefined(openid)) {
             console.log("403, openid is Empty");
             res.writeHead(403, { "errcode": 100002, "errmsg": "openid is Empty" });
             res.end("openid is Empty");

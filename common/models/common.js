@@ -46,7 +46,7 @@ Common.self_getTicket = function (res, appId, access_token, url) {
         ticketUrl: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
-
+    var request = require('request');
     request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function (error, resp, json) {
         if (!error && resp.statusCode == 200) {
             var ticketMap = JSON.parse(json);

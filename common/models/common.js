@@ -6,7 +6,7 @@ module.exports = function (Common) {
     var wechatApi = require('../../common/models/wechatapi')
 
 
-    var self_getToken = function (token, appId) {
+    function self_getToken(token, appId) {
         return new Promise(function (resolve, reject) {
             utils.get(token).then(function (data) {
 

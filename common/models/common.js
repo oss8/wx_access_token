@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = Common;
+var Common = {};
 var utils = require('../../common/models/utils')
 var configs = require('../../config/config');
-var wechatApi = require('../../common/models/wechatapi')
+var wechatApi = require('../../common/models/wechatapi');
 
 
-Common.self_getToken(token, appId) {
+Common.self_getToken = function (token, appId) {
     return new Promise(function (resolve, reject) {
         utils.get(token).then(function (data) {
 
@@ -38,7 +38,7 @@ Common.self_getToken(token, appId) {
 }
 
 
-Common._getTicket(res, appId, access_token, url) {
+Common._getTicket = function (res, appId, access_token, url) {
 
     var winxinconfig = {
         grant_type: 'client_credential',
@@ -66,3 +66,4 @@ Common._getTicket(res, appId, access_token, url) {
     })
 }
 
+module.exports = Common;

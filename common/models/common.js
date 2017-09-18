@@ -6,6 +6,7 @@ var configs = require('../../config/config');
 var wechatApi = require('../../common/models/wechatapi');
 var request = require('request');
 var sha1 = require('sha1');
+var needle = require('needle');
 
 Common.self_getToken = function (token, appId) {
     return new Promise(function (resolve, reject) {
@@ -71,6 +72,7 @@ Common.self_getQRCode = function(res, access_token, strQR){
 
     var pp = { "expire_seconds": 604800, "action_name": "QR_STR_SCENE", "action_info": { "scene": { "scene_str": strQR } } };
     var url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + access_token;
+
     needle.post(encodeURI(url), pp, { json: true }, function (err, resp) {
         // you can pass params as a string or as an object.
         if (err) {

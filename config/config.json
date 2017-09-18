@@ -16,5 +16,14 @@
             "grant_type": "client_credential",
             "token": "test-health1"
         }
+    },
+    {
+        "wechat": {
+            "appID": "wx5988fca57f1c50d8",
+            "appSecret": "b3c29e4d3fdc1c9266e9b6db80004acc",
+            "prefix": "https://api.weixin.qq.com/cgi-bin/",
+            "grant_type": "client_credential",
+            "token": "buliding"
+        }
     }    
 ]

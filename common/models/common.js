@@ -46,7 +46,13 @@ Common.self_getNickName = function (res, access_token, openId) {
         if (!error && resp.statusCode == 200) {
             var body = JSON.parse(json);
             console.log(body);
-            res.send(body);
+            if ( _.isUndefined(body.errcode)){
+                res.send(body);
+            }else{
+                res.writeHead(403, body);
+                res.end(body);
+            }
+            
         } else {
             res.send(resp);
         }

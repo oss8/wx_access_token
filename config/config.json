@@ -10,8 +10,8 @@
     },
     {
         "wechat": {
-            "appID": "1232411221",
-            "appSecret": "57e9a3e879a08b817e1163a20e767ca3",
+            "appID": "wx012a9130903a7396",
+            "appSecret": "d28771d2292343ace452ebcf35d24c6f",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "grant_type": "client_credential",
             "token": "test-health1"

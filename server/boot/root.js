@@ -49,7 +49,7 @@ module.exports = function (server) {
             GetTokenFromOpenID(req, res, next)
         } else if (req.path == '/decrypt') {
 
-            GetOpenIDFromToken(req, res, next)
+            GetOpenID(req, res, next)
         } else {
             next();
         }
@@ -86,7 +86,7 @@ module.exports = function (server) {
 
     }
 
-    function GetOpenIDFromToken(req, res, next, config) {
+    function GetOpenID(req, res, next, config) {
         //根据token从redis中获取access_token  
 
         var token = req.query.token;

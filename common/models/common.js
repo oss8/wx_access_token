@@ -51,7 +51,7 @@ Common.self_getNickName = function (res, access_token, openId) {
                 res.send(body);
             }else{
                 res.writeHead(403, body);
-                res.end(body);
+                res.end(JSON.stringify(body));
             }
             
         } else {

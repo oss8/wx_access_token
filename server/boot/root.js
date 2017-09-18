@@ -47,7 +47,7 @@ module.exports = function (server) {
         if (_.isUndefined(url)) {
             console.log("403, url is Empty");
             res.writeHead(403, { "errcode": 100002, "errmsg": "url is Empty" });
-            res.end();
+            res.end("url is Empty");
             return;
         }  
 

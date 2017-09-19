@@ -44,6 +44,9 @@ module.exports = function (server) {
         } else if (req.path == '/sendnotify') {
 
             sendNotify(req, res, next, config)
+        } else if (req.path == '/sendtemplate') {
+
+            sendTemplate(req, res, next, config)
         } else if (req.path == '/encrypt') {
 
             GetTokenFromOpenID(req, res, next)
@@ -53,11 +56,44 @@ module.exports = function (server) {
         } else if (req.path == '/createmenu') {
 
             CreateMenu(req, res, next, config)
+        } else if (req.path == '/getaddress') {
+            
+            getAddress(req, res, next)   
+        } else if (req.path == '/getaddress2') {
+            
+            getAddress2(req, res, next)                      
         } else {
             next();
         }
-
     })
+
+    function getAddress2(req, res, next) {
+        //根据token从redis中获取access_token  
+        var location_x = req.query.location_x;
+        var location_y = req.query.location_y;
+
+        common.GetAddressFromLBS_GD(location_x, location_y).then(function(data){
+            console.log(data);
+            res.send(data);
+        }, function (err) {
+            res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+            res.end(err.message);
+        });
+    }  
+
+    function getAddress(req, res, next) {
+        //根据token从redis中获取access_token  
+        var location_x = req.query.location_x;
+        var location_y = req.query.location_y;
+
+        common.GetAddressFromLBS_TX(location_x, location_y).then(function(data){
+            console.log(data);
+            res.send(data);
+        }, function (err) {
+            res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+            res.end(err.message);
+        });
+    }    
 
     var parsePostBody = function (req, done) {
         var arr = [];
@@ -73,11 +109,31 @@ module.exports = function (server) {
         });
     };
 
+    function sendTemplate(req, res, next, config) {
+        //根据token从redis中获取access_token 
+        var appId = req.query.appId;
+
+        parsePostBody(req, (chunks) => {
+            var str = chunks.toString();
+            var WXData = JSON.parse(chunks.toString());
+            common.self_getToken(config.wechat.token, appId).then(function (token) {
+                common.CreateMenu(menu, token.access_token).then(function (data) {
+                    console.log(data);
+                    res.send(data);
+                }, function (err) {
+                    res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+                    res.end(err.message);
+                });
+            });
+        });
+    }
+
     function CreateMenu(req, res, next, config) {
         //根据token从redis中获取access_token 
         var appId = req.query.appId;
 
         parsePostBody(req, (chunks) => {
+            var str = chunks.toString();
             var menu = JSON.parse(chunks.toString());
             common.self_getToken(config.wechat.token, appId).then(function (token) {
                 common.CreateMenu(menu, token.access_token).then(function (data) {
@@ -89,8 +145,6 @@ module.exports = function (server) {
                 });
             });
         });
-
-
     }
 
     function GetTokenFromOpenID(req, res, next) {

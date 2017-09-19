@@ -12,6 +12,51 @@ var jwtdecode = require('jwt-simple');
 var rf = require("fs");
 var jwt = require('jsonwebtoken');
 
+
+Common.GetAddressFromLBS_GD = function (location_x, location_y) {
+    return new Promise(function (resolve, reject) {
+        var url = "http://restapi.amap.com/v3/geocode/regeo?location=" + location_y + "," + location_x + "&key=974a2c2c4f3fdbc1892cc70aa679dc01";
+
+        needle.get(encodeURI(url), null, function (err, localInfo) {
+
+            if (err) {
+                reject(err);
+            }
+            else {
+                if (localInfo.body.status == 1) {
+                    resolve(localInfo.body.regeocode);
+                }
+                else {
+                    reject(localInfo.body);
+                }
+            }
+        });
+    });
+}
+
+
+Common.GetAddressFromLBS_TX = function (location_x, location_y) {
+    return new Promise(function (resolve, reject) {
+        var url = "http://apis.map.qq.com/ws/geocoder/v1/?location=" + location_x + "," + location_y + "&key=6UWBZ-BRKR3-YWG3Y-337NE-DRCMZ-EGBF7";
+
+        needle.get(encodeURI(url), null, function (err, localInfo) {
+
+            if (err) {
+                reject(err);
+            }
+            else {
+                if (localInfo.body.status == 0) {
+                    resolve(localInfo.body.result);
+                }
+                else {
+                    reject(localInfo.body);
+                }
+            }
+        });
+    });
+}
+
+
 Common.CreateMenu = function (menu, access_token) {
 
     return new Promise(function (resolve, reject) {
@@ -30,6 +75,25 @@ Common.CreateMenu = function (menu, access_token) {
         });
     });
 }
+
+Common.SendTemplate = function (data, access_token) {
+    
+        return new Promise(function (resolve, reject) {
+            var url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token;
+    
+            needle.post(encodeURI(url), data, { json: true }, function (err, resp) {
+                // you can pass params as a string or as an object.
+                if (err) {
+                    //cb(err, { status: 0, "result": "" });
+                    EWTRACE(err.message);
+                    reject(err);
+                }
+                else {
+                    resolve(resp.body);
+                }
+            });
+        });
+    }
 
 Common.GetTokenFromOpenID = function (userinfo) {
     delete userinfo.exp;

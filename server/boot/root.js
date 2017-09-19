@@ -62,6 +62,15 @@ module.exports = function (server) {
         } else if (req.path == '/getaddress2') {
             
             getAddress2(req, res, next)                      
+        } else if (req.path == '/createorders') {
+            
+            common.CreateOrders(res, req, config) ;            
+        } else if (req.path == '/queryorders') {
+            
+            common.QueryOrders(res, req, config) ;              
+        } else if (req.path == '/closeorders') {
+            
+            common.CloseOrders(res, req, config) ;               
         } else {
             next();
         }

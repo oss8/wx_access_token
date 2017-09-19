@@ -11,7 +11,135 @@ var _ = require('underscore');
 var jwtdecode = require('jwt-simple');
 var rf = require("fs");
 var jwt = require('jsonwebtoken');
+var WXPay = require('weixin-pay');
 
+
+
+
+function raw(args) {
+    var keys = Object.keys(args);
+    keys = keys.sort()
+    var newArgs = {};
+    keys.forEach(function (key) {
+        newArgs[key] = args[key];
+    });
+    var string = '';
+    for (var k in newArgs) {
+        string += '&' + k + '=' + newArgs[k];
+    }
+    string = string.substr(1);
+    return string;
+}
+
+function paysignjs(appid, nonceStr, packages, mch_id, timeStamp, prepay_id, key) {
+    var ret = {
+        appid: appid,
+        noncestr: nonceStr,
+        package: packages,
+        partnerid: mch_id,
+        timestamp: timeStamp,
+        prepayid: prepay_id
+    };
+    var string = raw(ret);
+
+    var crypto = require('crypto');
+    string = string + '&key=' + key;
+    var sign = crypto.createHash('md5').update(string, 'utf8').digest('hex');
+    return sign.toUpperCase();
+}
+
+function createTimeStamp() {
+    return parseInt(new Date().getTime() / 1000) + '';
+}
+
+function createNonceStr() {
+    return (new Date()).format('yyyyMMdd') + "-" + Math.random().toString(36).substr(2, 9);
+}
+
+
+Common.CreateOrders = function (res, req, config) {
+    //http://0.0.0.0:3000/createorders?appId=wxb74654c82da12482&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify
+    var fee = req.query.fee;
+    var notifyurl = req.query.notifyUrl;
+
+    var wxpay = WXPay({
+        appid: config.wechat.appID,
+        mch_id: config.wechat.mch_id,
+        partner_key: config.wechat.partner_key, //微信商户平台API密钥
+        pfx: '' //微信商户平台证书
+    });
+
+    var _out_trade_no = (new Date()).format('yyyyMMdd') + "-" + Math.random().toString(36).substr(2, 9);
+
+    wxpay.createUnifiedOrder({
+        body: '支付',
+        out_trade_no: _out_trade_no,
+        total_fee: fee,
+        spbill_create_ip: req.host,
+        notify_url: notifyurl,
+        trade_type: 'NATIVE',
+        product_id: '1234567890'
+    }, function (err, result) {
+        result.out_trade_no = _out_trade_no;
+
+        var nonce_str = createNonceStr();
+        var timeStamp = createTimeStamp();
+        var prepay_id = result.prepay_id;
+
+        //生成移动端app调用签名  
+        var _paySignjs = paysignjs(config.wechat.appID, nonce_str, 'Sign=WXPay', config.wechat.mch_id, timeStamp, prepay_id, config.wechat.partner_key);
+        var args = {
+            appId: config.wechat.appID,
+            timeStamp: timeStamp,
+            nonceStr: nonce_str,
+            signType: "MD5",
+            mch_id: config.wechat.mch_id,
+            prepay_id: prepay_id,
+            paySign: _paySignjs,
+            out_trade_no: _out_trade_no,
+            code_url: result.code_url  //微信支付生成二维码，在此处返回
+        };
+
+        result.threePay = args;
+
+        console.log(result);
+        res.send(result);
+    });
+}
+
+Common.QueryOrders = function (res, req, config) {
+
+    var trade_no = req.query.out_trade_no;
+
+    var wxpay = WXPay({
+        appid: config.wechat.appID,
+        mch_id: config.wechat.mch_id,
+        partner_key: config.wechat.partner_key, //微信商户平台API密钥
+        pfx: '' //微信商户平台证书
+    });
+
+    wxpay.queryOrder({ out_trade_no: trade_no }, function (err, order) {
+        console.log(order);
+        res.send(order);
+    });
+}
+
+Common.CloseOrders = function (res, req, config) {
+
+    var trade_no = req.query.out_trade_no;
+
+    var wxpay = WXPay({
+        appid: config.wechat.appID,
+        mch_id: config.wechat.mch_id,
+        partner_key: config.wechat.partner_key, //微信商户平台API密钥
+        pfx: '' //微信商户平台证书
+    });
+
+    wxpay.closeOrder({ out_trade_no: trade_no }, function (err, order) {
+        console.log(order);
+        res.send(order);
+    });
+}
 
 Common.GetAddressFromLBS_GD = function (location_x, location_y) {
     return new Promise(function (resolve, reject) {
@@ -77,23 +205,23 @@ Common.CreateMenu = function (menu, access_token) {
 }
 
 Common.SendTemplate = function (data, access_token) {
-    
-        return new Promise(function (resolve, reject) {
-            var url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token;
-    
-            needle.post(encodeURI(url), data, { json: true }, function (err, resp) {
-                // you can pass params as a string or as an object.
-                if (err) {
-                    //cb(err, { status: 0, "result": "" });
-                    EWTRACE(err.message);
-                    reject(err);
-                }
-                else {
-                    resolve(resp.body);
-                }
-            });
+
+    return new Promise(function (resolve, reject) {
+        var url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token;
+
+        needle.post(encodeURI(url), data, { json: true }, function (err, resp) {
+            // you can pass params as a string or as an object.
+            if (err) {
+                //cb(err, { status: 0, "result": "" });
+                EWTRACE(err.message);
+                reject(err);
+            }
+            else {
+                resolve(resp.body);
+            }
         });
-    }
+    });
+}
 
 Common.GetTokenFromOpenID = function (userinfo) {
     delete userinfo.exp;
@@ -251,4 +379,6 @@ Common.self_getQRCode = function (res, access_token, strQR) {
         }
     });
 }
+
+
 module.exports = Common;

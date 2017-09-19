@@ -19,11 +19,13 @@
     },
     {
         "wechat": {
-            "appID": "wx5988fca57f1c50d8",
-            "appSecret": "b3c29e4d3fdc1c9266e9b6db80004acc",
+            "appID": "wxb74654c82da12482",
+            "appSecret": "d28771d2292343ace452ebcf35d24c6f",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "grant_type": "client_credential",
-            "token": "buliding"
+            "token": "yixiang",
+            "mch_id": "1254501201",
+            "partner_key": "1231314202eshineem2015weixinpays"
         }
     }
 ]

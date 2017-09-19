@@ -81,6 +81,7 @@ module.exports = function (server) {
             var menu = JSON.parse(chunks.toString());
             common.self_getToken(config.wechat.token, appId).then(function (token) {
                 common.CreateMenu(menu, token.access_token).then(function (data) {
+                    console.log(data);
                     res.send(data);
                 }, function (err) {
                     res.writeHead(500, { "errcode": 100003, "errmsg": err.message });

@@ -12,10 +12,28 @@ var jwtdecode = require('jwt-simple');
 var rf = require("fs");
 var jwt = require('jsonwebtoken');
 
+Common.CreateMenu = function (menu, access_token) {
+
+    return new Promise(function (resolve, reject) {
+        var url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + access_token;
+
+        needle.post(encodeURI(url), menu, { json: true }, function (err, resp) {
+            // you can pass params as a string or as an object.
+            if (err) {
+                //cb(err, { status: 0, "result": "" });
+                EWTRACE(err.message);
+                reject(err);
+            }
+            else {
+                resolve(resp.body);
+            }
+        });
+    });
+}
 
 Common.GetTokenFromOpenID = function (userinfo) {
     delete userinfo.exp;
-    
+
     var cert = rf.readFileSync("jwt_rsa_private_key.pem", "utf-8");
     return new Promise(function (resolve, reject) {
         jwt.sign(userinfo, cert, { algorithm: 'RS256', expiresIn: '1d' }, function (err, token) {
@@ -29,7 +47,7 @@ Common.GetTokenFromOpenID = function (userinfo) {
 }
 
 Common.GetOpenIDFromToken = function (token) {
-    
+
     var rf = require("fs");
     var secret = rf.readFileSync("jwt_rsa_public_key.pem", "utf-8");
     var decoded = null;

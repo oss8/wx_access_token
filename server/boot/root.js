@@ -50,6 +50,9 @@ module.exports = function (server) {
         } else if (req.path == '/decrypt') {
 
             GetOpenID(req, res, next)
+        } else if (req.path == '/createmenu') {
+
+            CreateMenu(req, res, next, config)
         } else {
             next();
         }
@@ -69,6 +72,25 @@ module.exports = function (server) {
             done(chunks);
         });
     };
+
+    function CreateMenu(req, res, next, config) {
+        //根据token从redis中获取access_token 
+        var appId = req.query.appId;
+
+        parsePostBody(req, (chunks) => {
+            var menu = JSON.parse(chunks.toString());
+            common.self_getToken(config.wechat.token, appId).then(function (token) {
+                common.CreateMenu(menu, token.access_token).then(function (data) {
+                    res.send(data);
+                }, function (err) {
+                    res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+                    res.end(err.message);
+                });
+            });
+        });
+
+
+    }
 
     function GetTokenFromOpenID(req, res, next) {
         //根据token从redis中获取access_token 

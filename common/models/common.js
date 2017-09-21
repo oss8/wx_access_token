@@ -362,9 +362,9 @@ Common.self_getTicket = function (res, access_token, url) {
     })
 }
 
-Common.self_getQRCode = function (res, access_token, strQR) {
+Common.self_getQRCode = function (res, access_token, strQR, type) {
 
-    var pp = { "expire_seconds": 604800, "action_name": "QR_STR_SCENE", "action_info": { "scene": { "scene_str": strQR } } };
+    var pp = { "expire_seconds": 2592000, "action_name": type, "action_info": { "scene": { "scene_str": strQR } } };
     var url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + access_token;
 
     needle.post(encodeURI(url), pp, { json: true }, function (err, resp) {

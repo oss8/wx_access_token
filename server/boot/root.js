@@ -37,7 +37,10 @@ module.exports = function (server) {
             getTicket(req, res, next, config)
         } else if (req.path == '/qrcode') {
 
-            getQRCode(req, res, next, config)
+            getQRCode(req, res, next, config,'QR_STR_SCENE')
+        } else if (req.path == '/limitqrcode') {
+
+            getQRCode(req, res, next, config,'QR_LIMIT_STR_SCENE')
         } else if (req.path == '/nickname') {
 
             getNickName(req, res, next, config)
@@ -57,20 +60,20 @@ module.exports = function (server) {
 
             CreateMenu(req, res, next, config)
         } else if (req.path == '/getaddress') {
-            
-            getAddress(req, res, next)   
+
+            getAddress(req, res, next)
         } else if (req.path == '/getaddress2') {
-            
-            getAddress2(req, res, next)                      
+
+            getAddress2(req, res, next)
         } else if (req.path == '/createorders') {
-            
-            common.CreateOrders(res, req, config) ;            
+
+            common.CreateOrders(res, req, config);
         } else if (req.path == '/queryorders') {
-            
-            common.QueryOrders(res, req, config) ;              
+
+            common.QueryOrders(res, req, config);
         } else if (req.path == '/closeorders') {
-            
-            common.CloseOrders(res, req, config) ;               
+
+            common.CloseOrders(res, req, config);
         } else {
             next();
         }
@@ -81,28 +84,28 @@ module.exports = function (server) {
         var location_x = req.query.location_x;
         var location_y = req.query.location_y;
 
-        common.GetAddressFromLBS_GD(location_x, location_y).then(function(data){
+        common.GetAddressFromLBS_GD(location_x, location_y).then(function (data) {
             console.log(data);
             res.send(data);
         }, function (err) {
             res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
             res.end(err.message);
         });
-    }  
+    }
 
     function getAddress(req, res, next) {
         //根据token从redis中获取access_token  
         var location_x = req.query.location_x;
         var location_y = req.query.location_y;
 
-        common.GetAddressFromLBS_TX(location_x, location_y).then(function(data){
+        common.GetAddressFromLBS_TX(location_x, location_y).then(function (data) {
             console.log(data);
             res.send(data);
         }, function (err) {
             res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
             res.end(err.message);
         });
-    }    
+    }
 
     var parsePostBody = function (req, done) {
         var arr = [];
@@ -243,7 +246,7 @@ module.exports = function (server) {
 
     }
 
-    function getQRCode(req, res, next, config) {
+    function getQRCode(req, res, next, config, type) {
         //根据token从redis中获取access_token  
         var appId = req.query.appId;
         var QRCode = req.query.QRCode;
@@ -254,7 +257,7 @@ module.exports = function (server) {
             return;
         }
         common.self_getToken(config.wechat.token, appId).then(function (data) {
-            common.self_getQRCode(res, data.access_token, QRCode)
+            common.self_getQRCode(res, data.access_token, QRCode, type)
         }, function (err) {
             res.writeHead(500, err);
             res.end();

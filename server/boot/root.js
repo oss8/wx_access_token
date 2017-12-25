@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (server) {
+module.exports = function(server) {
     // Install a `/` route that returns server status
     var router = server.loopback.Router();
     router.get('/', server.loopback.status());
@@ -12,19 +12,22 @@ module.exports = function (server) {
     var wechatApi = require('../../common/models/wechatapi')
     var common = require('../../common/models/common')
 
-    router.use(function (req, res, next) {
+    router.use(function(req, res, next) {
         var appId = req.query.appId;
         if (_.isUndefined(appId)) {
             appId = 'wx397644d24ec87fd1';
         }
 
-        var config = _.find(configs, function (item) {
+        var config = _.find(configs, function(item) {
             return item.wechat.appID == appId;
         })
 
         if (_.isUndefined(config)) {
             console.log("403, AppID is not find");
-            res.writeHead(403, { "errcode": 100001, "errmsg": "AppID is not find" });
+            res.writeHead(403, {
+                "errcode": 100001,
+                "errmsg": "AppID is not find"
+            });
             res.end("AppID is not find");
             return;
         }
@@ -37,10 +40,10 @@ module.exports = function (server) {
             getTicket(req, res, next, config)
         } else if (req.path == '/qrcode') {
 
-            getQRCode(req, res, next, config,'QR_STR_SCENE')
+            getQRCode(req, res, next, config, 'QR_STR_SCENE')
         } else if (req.path == '/limitqrcode') {
 
-            getQRCode(req, res, next, config,'QR_LIMIT_STR_SCENE')
+            getQRCode(req, res, next, config, 'QR_LIMIT_STR_SCENE')
         } else if (req.path == '/nickname') {
 
             getNickName(req, res, next, config)
@@ -53,6 +56,9 @@ module.exports = function (server) {
         } else if (req.path == '/encrypt') {
 
             GetTokenFromOpenID(req, res, next)
+        } else if (req.path == '/authentication') {
+
+            Authentication(req, res, next)
         } else if (req.path == '/decrypt') {
 
             GetOpenID(req, res, next)
@@ -84,11 +90,14 @@ module.exports = function (server) {
         var location_x = req.query.location_x;
         var location_y = req.query.location_y;
 
-        common.GetAddressFromLBS_GD(location_x, location_y).then(function (data) {
+        common.GetAddressFromLBS_GD(location_x, location_y).then(function(data) {
             console.log(data);
             res.send(data);
-        }, function (err) {
-            res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+        }, function(err) {
+            res.writeHead(500, {
+                "errcode": 100003,
+                "errmsg": err.message
+            });
             res.end(err.message);
         });
     }
@@ -98,16 +107,19 @@ module.exports = function (server) {
         var location_x = req.query.location_x;
         var location_y = req.query.location_y;
 
-        common.GetAddressFromLBS_TX(location_x, location_y).then(function (data) {
+        common.GetAddressFromLBS_TX(location_x, location_y).then(function(data) {
             console.log(data);
             res.send(data);
-        }, function (err) {
-            res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+        }, function(err) {
+            res.writeHead(500, {
+                "errcode": 100003,
+                "errmsg": err.message
+            });
             res.end(err.message);
         });
     }
 
-    var parsePostBody = function (req, done) {
+    var parsePostBody = function(req, done) {
         var arr = [];
         var chunks;
 
@@ -128,12 +140,15 @@ module.exports = function (server) {
         parsePostBody(req, (chunks) => {
             var str = chunks.toString();
             var WXData = JSON.parse(chunks.toString());
-            common.self_getToken(config.wechat.token, appId).then(function (token) {
-                common.CreateMenu(menu, token.access_token).then(function (data) {
+            common.self_getToken(config.wechat.token, appId).then(function(token) {
+                common.CreateMenu(menu, token.access_token).then(function(data) {
                     console.log(data);
                     res.send(data);
-                }, function (err) {
-                    res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+                }, function(err) {
+                    res.writeHead(500, {
+                        "errcode": 100003,
+                        "errmsg": err.message
+                    });
                     res.end(err.message);
                 });
             });
@@ -147,12 +162,15 @@ module.exports = function (server) {
         parsePostBody(req, (chunks) => {
             var str = chunks.toString();
             var menu = JSON.parse(chunks.toString());
-            common.self_getToken(config.wechat.token, appId).then(function (token) {
-                common.CreateMenu(menu, token.access_token).then(function (data) {
+            common.self_getToken(config.wechat.token, appId).then(function(token) {
+                common.CreateMenu(menu, token.access_token).then(function(data) {
                     console.log(data);
                     res.send(data);
-                }, function (err) {
-                    res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+                }, function(err) {
+                    res.writeHead(500, {
+                        "errcode": 100003,
+                        "errmsg": err.message
+                    });
                     res.end(err.message);
                 });
             });
@@ -164,15 +182,43 @@ module.exports = function (server) {
 
         parsePostBody(req, (chunks) => {
             var body = JSON.parse(chunks.toString());
-            common.GetTokenFromOpenID(body).then(function (data) {
+            common.GetTokenFromOpenID(body).then(function(data) {
                 res.send(data);
-            }, function (err) {
-                res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+            }, function(err) {
+                res.writeHead(500, {
+                    "errcode": 100003,
+                    "errmsg": err.message
+                });
                 res.end(err.message);
             });
         });
+    }
 
 
+    function Authentication(req, res, next) {
+        parsePostBody(req, (chunks) => {
+            var body = JSON.parse(chunks.toString());
+
+            var openList = [];
+            openList.push('https://u.wechat.com/ECQyBQ05Gt9zAJ6bEn42gzI');
+            openList.push('https://u.wechat.com/EE-4qLrqzioUWCVyOuo3Ut0');
+            openList.push('https://u.wechat.com/EJNCZJLvGQZfpz8Gdvokm6k');
+            openList.push('https://u.wechat.com/ENQ1N6rfRuSfMundNXqBmRg');
+
+            var find = _.find(openList, function(fitem) {
+                EWTRACE(fitem);
+                return fitem == userInfo.vgdecoderesult;
+            })
+
+            if (!_.isUndefined(find)) {
+                EWTRACE('send ok');
+                res.send("code=0000&&desc=ok");
+            } else {
+                EWTRACE('send bad');
+                res.send("code=0001&&desc=bad");
+            }
+            res.end();
+        });
     }
 
     function GetOpenID(req, res, next, config) {
@@ -181,7 +227,10 @@ module.exports = function (server) {
         var token = req.query.token;
         if (_.isUndefined(token)) {
             console.log("403, token is Empty");
-            res.writeHead(403, { "errcode": 100002, "errmsg": "token is Empty" });
+            res.writeHead(403, {
+                "errcode": 100002,
+                "errmsg": "token is Empty"
+            });
             res.end("token is Empty");
             return;
         }
@@ -191,7 +240,10 @@ module.exports = function (server) {
             res.send(data);
 
         } catch (err) {
-            res.writeHead(500, { "errcode": 100003, "errmsg": err.message });
+            res.writeHead(500, {
+                "errcode": 100003,
+                "errmsg": err.message
+            });
             res.end(err.message);
         };
 
@@ -206,21 +258,27 @@ module.exports = function (server) {
 
         if (_.isUndefined(openid)) {
             console.log("403, openid is Empty");
-            res.writeHead(403, { "errcode": 100002, "errmsg": "openid is Empty" });
+            res.writeHead(403, {
+                "errcode": 100002,
+                "errmsg": "openid is Empty"
+            });
             res.end("openid is Empty");
             return;
         }
 
         if (_.isUndefined(context)) {
             console.log("403, context is Empty");
-            res.writeHead(403, { "errcode": 100002, "errmsg": "context is Empty" });
+            res.writeHead(403, {
+                "errcode": 100002,
+                "errmsg": "context is Empty"
+            });
             res.end("context is Empty");
             return;
         }
 
-        common.self_getToken(config.wechat.token, appId).then(function (data) {
+        common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_sendNotify(res, data.access_token, openid, context)
-        }, function (err) {
+        }, function(err) {
             res.writeHead(500, err);
             res.end();
         });
@@ -233,13 +291,16 @@ module.exports = function (server) {
         var openid = req.query.openid;
         if (_.isUndefined(openid)) {
             console.log("403, openid is Empty");
-            res.writeHead(403, { "errcode": 100002, "errmsg": "openid is Empty" });
+            res.writeHead(403, {
+                "errcode": 100002,
+                "errmsg": "openid is Empty"
+            });
             res.end("openid is Empty");
             return;
         }
-        common.self_getToken(config.wechat.token, appId).then(function (data) {
+        common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_getNickName(res, data.access_token, openid)
-        }, function (err) {
+        }, function(err) {
             res.writeHead(500, err);
             res.end();
         });
@@ -252,13 +313,16 @@ module.exports = function (server) {
         var QRCode = req.query.QRCode;
         if (_.isUndefined(QRCode)) {
             console.log("403, QRCode is Empty");
-            res.writeHead(403, { "errcode": 100002, "errmsg": "QRCode is Empty" });
+            res.writeHead(403, {
+                "errcode": 100002,
+                "errmsg": "QRCode is Empty"
+            });
             res.end("QRCode is Empty");
             return;
         }
-        common.self_getToken(config.wechat.token, appId).then(function (data) {
+        common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_getQRCode(res, data.access_token, QRCode, type)
-        }, function (err) {
+        }, function(err) {
             res.writeHead(500, err);
             res.end();
         });
@@ -271,14 +335,17 @@ module.exports = function (server) {
         var url = req.query.url;
         if (_.isUndefined(url)) {
             console.log("403, url is Empty");
-            res.writeHead(403, { "errcode": 100002, "errmsg": "url is Empty" });
+            res.writeHead(403, {
+                "errcode": 100002,
+                "errmsg": "url is Empty"
+            });
             res.end("url is Empty");
             return;
         }
 
-        common.self_getToken(config.wechat.token, appId).then(function (data) {
+        common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_getTicket(res, data.access_token, url)
-        }, function (err) {
+        }, function(err) {
             res.writeHead(500, err);
             res.end();
         });
@@ -289,9 +356,9 @@ module.exports = function (server) {
         //根据token从redis中获取access_token  
         var appId = req.query.appId;
 
-        common.self_getToken(config.wechat.token, appId).then(function (data) {
+        common.self_getToken(config.wechat.token, appId).then(function(data) {
             res.send(data);
-        }, function (err) {
+        }, function(err) {
             res.writeHead(500, err);
             res.end();
         });

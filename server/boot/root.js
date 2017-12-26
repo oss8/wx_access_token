@@ -201,21 +201,31 @@ module.exports = function(server) {
         //根据token从redis中获取access_token 
 
         parsePostBody(req, (chunks) => {
-            var body = JSON.parse(chunks.toString());
-            common.GetLisence(body).then(function(data) {
-                res.send(data);
-            }, function(err) {
+            try {
+                var body = JSON.parse(chunks.toString());
+                var user = {'openid':body.openid};
+                common.GetTokenFromOpenID(user,'1h').then(function(data) {
+
+                    res.send(data);
+                }, function(err) {
+                    res.writeHead(500, {
+                        "errcode": 100003,
+                        "errmsg": err.message
+                    });
+                    res.end(err.message);
+                });                
+            } catch (error) {
                 res.writeHead(500, {
                     "errcode": 100003,
-                    "errmsg": err.message
+                    "errmsg": error.message
                 });
-                res.end(err.message);
-            });
+                res.end(error.message);                
+            }
         });
     }
 
     function Authentication(req, res, next) {
-        
+
         parsePostBody(req, (chunks) => {
             var body = JSON.parse(chunks.toString());
             var data = common.GetOpenIDFromToken(body.vgdecoderesult);
@@ -224,15 +234,14 @@ module.exports = function(server) {
             openList.push('https://u.wechat.com/ECQyBQ05Gt9zAJ6bEn42gzI');
             openList.push('https://u.wechat.com/EE-4qLrqzioUWCVyOuo3Ut0');
             openList.push('https://u.wechat.com/EJNCZJLvGQZfpz8Gdvokm6k');
-            openList.push('https://u.wechat.com/ENQ1N6rfRuSfMundNXqBmRg');
+            openList.push('111222');
 
             var find = _.find(openList, function(fitem) {
-                EWTRACE(fitem);
                 return fitem == data.openid;
             })
 
             if (!_.isUndefined(find)) {
-                EWTRACE('send ok');
+                //EWTRACE('send ok');
                 res.send("code=0000&&desc=ok");
             } else {
                 EWTRACE('send bad');

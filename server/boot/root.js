@@ -204,25 +204,24 @@ module.exports = function(server) {
             try {
                 var body = JSON.parse(chunks.toString());
 
-                common.GetTokenFromOpenID(body.token).then(function(data) {
+                var data = common.GetOpenIDFromToken(body.token);
 
+                console.log("GetLisence");
+                console.log(data);
+                var user = {
+                    'openid': data.openid
+                };
+                common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
 
-                    console.log("GetLisence");
-                    console.log(data);
-                    var user = {
-                        'openid': data.openid
-                    };
-                    common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
-
-                        res.send(resdata);
-                    }, function(err) {
-                        res.writeHead(500, {
-                            "errcode": 100003,
-                            "errmsg": err.message
-                        });
-                        res.end(err.message);
+                    res.send(resdata);
+                }, function(err) {
+                    res.writeHead(500, {
+                        "errcode": 100003,
+                        "errmsg": err.message
                     });
+                    res.end(err.message);
                 });
+
             } catch (error) {
                 res.writeHead(500, {
                     "errcode": 100003,

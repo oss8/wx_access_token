@@ -239,6 +239,21 @@ Common.GetLisence = function (userinfo) {
     });
 }
 
+Common.GetTokenFromOpenID = function (userinfo, time) {
+    delete userinfo.exp;
+
+    var cert = rf.readFileSync("jwt_rsa_private_key.pem", "utf-8");
+    return new Promise(function (resolve, reject) {
+        jwt.sign(userinfo, cert, { algorithm: 'RS256', expiresIn: '1d' }, function (err, token) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(token);
+            }
+        });
+    });
+}
+
 Common.GetOpenIDFromToken = function (token) {
 
     var rf = require("fs");

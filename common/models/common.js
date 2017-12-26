@@ -223,12 +223,13 @@ Common.SendTemplate = function (data, access_token) {
     });
 }
 
-Common.GetTokenFromOpenID = function (userinfo) {
-    delete userinfo.exp;
+Common.GetLisence = function (userinfo) {
+    var user = {};
+    user.openid = userinfo.openid;
 
     var cert = rf.readFileSync("jwt_rsa_private_key.pem", "utf-8");
     return new Promise(function (resolve, reject) {
-        jwt.sign(userinfo, cert, { algorithm: 'RS256', expiresIn: '1d' }, function (err, token) {
+        jwt.sign(userinfo, cert, { algorithm: 'RS256', expiresIn: '1h' }, function (err, token) {
             if (err) {
                 reject(err);
             } else {

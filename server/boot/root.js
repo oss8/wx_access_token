@@ -56,12 +56,15 @@ module.exports = function(server) {
         } else if (req.path == '/encrypt') {
 
             GetTokenFromOpenID(req, res, next)
-        } else if (req.path == '/authentication') {
-
-            Authentication(req, res, next)
         } else if (req.path == '/decrypt') {
 
             GetOpenID(req, res, next)
+        } else if (req.path == '/getlisence') {
+
+            GetLisence(req, res, next)
+        } else if (req.path == '/authentication') {
+
+            Authentication(req, res, next)                        
         } else if (req.path == '/createmenu') {
 
             CreateMenu(req, res, next, config)
@@ -194,6 +197,22 @@ module.exports = function(server) {
         });
     }
 
+    function GetLisence(req, res, next) {
+        //根据token从redis中获取access_token 
+
+        parsePostBody(req, (chunks) => {
+            var body = JSON.parse(chunks.toString());
+            common.GetLisence(body).then(function(data) {
+                res.send(data);
+            }, function(err) {
+                res.writeHead(500, {
+                    "errcode": 100003,
+                    "errmsg": err.message
+                });
+                res.end(err.message);
+            });
+        });
+    }
 
     function Authentication(req, res, next) {
         parsePostBody(req, (chunks) => {

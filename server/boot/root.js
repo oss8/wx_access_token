@@ -64,7 +64,7 @@ module.exports = function(server) {
             GetLisence(req, res, next)
         } else if (req.path == '/authentication') {
 
-            Authentication(req, res, next)                        
+            Authentication(req, res, next)
         } else if (req.path == '/createmenu') {
 
             CreateMenu(req, res, next, config)
@@ -203,25 +203,32 @@ module.exports = function(server) {
         parsePostBody(req, (chunks) => {
             try {
                 var body = JSON.parse(chunks.toString());
-                console.log("GetLisence");
-                console.log(body);
-                var user = {'openid':body.openid};
-                common.GetTokenFromOpenID(user,'1h').then(function(data) {
 
-                    res.send(data);
-                }, function(err) {
-                    res.writeHead(500, {
-                        "errcode": 100003,
-                        "errmsg": err.message
+                common.GetTokenFromOpenID(body.token).then(function(data) {
+
+
+                    console.log("GetLisence");
+                    console.log(data);
+                    var user = {
+                        'openid': body.openid
+                    };
+                    common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
+
+                        res.send(resdata);
+                    }, function(err) {
+                        res.writeHead(500, {
+                            "errcode": 100003,
+                            "errmsg": err.message
+                        });
+                        res.end(err.message);
                     });
-                    res.end(err.message);
-                });                
+                });
             } catch (error) {
                 res.writeHead(500, {
                     "errcode": 100003,
                     "errmsg": error.message
                 });
-                res.end(error.message);                
+                res.end(error.message);
             }
         });
     }

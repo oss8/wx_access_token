@@ -215,8 +215,10 @@ module.exports = function(server) {
     }
 
     function Authentication(req, res, next) {
+        
         parsePostBody(req, (chunks) => {
             var body = JSON.parse(chunks.toString());
+            var data = common.GetOpenIDFromToken(body.vgdecoderesult);
 
             var openList = [];
             openList.push('https://u.wechat.com/ECQyBQ05Gt9zAJ6bEn42gzI');
@@ -226,7 +228,7 @@ module.exports = function(server) {
 
             var find = _.find(openList, function(fitem) {
                 EWTRACE(fitem);
-                return fitem == userInfo.vgdecoderesult;
+                return fitem == data.openid;
             })
 
             if (!_.isUndefined(find)) {

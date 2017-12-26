@@ -210,7 +210,7 @@ module.exports = function(server) {
                     console.log("GetLisence");
                     console.log(data);
                     var user = {
-                        'openid': body.openid
+                        'openid': data.openid
                     };
                     common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
 

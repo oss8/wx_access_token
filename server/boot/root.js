@@ -213,7 +213,10 @@ module.exports = function(server) {
                 };
                 common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
 
-                    res.send(resdata);
+                    res.send({
+                        status: 0,
+                        "result": resdata
+                    });
                 }, function(err) {
                     res.writeHead(500, {
                         "errcode": 100003,
@@ -238,11 +241,12 @@ module.exports = function(server) {
             var body = JSON.parse(chunks.toString());
             var data = common.GetOpenIDFromToken(body.vgdecoderesult);
 
+            console.log(data);
             var openList = [];
             openList.push('https://u.wechat.com/ECQyBQ05Gt9zAJ6bEn42gzI');
             openList.push('https://u.wechat.com/EE-4qLrqzioUWCVyOuo3Ut0');
             openList.push('https://u.wechat.com/EJNCZJLvGQZfpz8Gdvokm6k');
-            openList.push('111222');
+            openList.push('oFVZ-1M21POeEOX2gejWRkDE-EWw');
 
             var find = _.find(openList, function(fitem) {
                 return fitem == data.openid;
@@ -252,7 +256,7 @@ module.exports = function(server) {
                 //EWTRACE('send ok');
                 res.send("code=0000&&desc=ok");
             } else {
-                EWTRACE('send bad');
+                //EWTRACE('send bad');
                 res.send("code=0001&&desc=bad");
             }
             res.end();

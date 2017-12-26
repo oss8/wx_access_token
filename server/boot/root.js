@@ -203,6 +203,8 @@ module.exports = function(server) {
         parsePostBody(req, (chunks) => {
             try {
                 var body = JSON.parse(chunks.toString());
+                console.log("GetLisence");
+                console.log(body);
                 var user = {'openid':body.openid};
                 common.GetTokenFromOpenID(user,'1h').then(function(data) {
 

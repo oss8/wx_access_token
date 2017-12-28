@@ -6,6 +6,7 @@ module.exports = function(server) {
     router.get('/', server.loopback.status());
     server.use(router);
     var _ = require('underscore');
+    var uuid = require('node-uuid');
 
     var utils = require('../../common/models/utils')
     var configs = require('../../config/config');
@@ -203,27 +204,38 @@ module.exports = function(server) {
         parsePostBody(req, (chunks) => {
             try {
                 var body = JSON.parse(chunks.toString());
-
                 var data = common.GetOpenIDFromToken(body.token);
 
-                console.log("GetLisence");
                 console.log(data);
-                var user = {
-                    'openid': data.openid
-                };
-                common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
+                var bsSQL = "select userid from ac_users where openid = '"+data.openid+"'";
+                Common.DoSQL(bsSQL).then(function(result){
+                    if ( result.lenght > 0 ){
+                        var user = {
+                            'openid': result[0].userid
+                        };
+                        common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
+    
+                            res.send({
+                                status: 0,
+                                "result": resdata
+                            });
+                        }, function(err) {
+                            res.writeHead(500, {
+                                "errcode": 100003,
+                                "errmsg": err.message
+                            });
+                            res.end(err.message);
+                        });
+                    }else{
+                        res.writeHead(500, {
+                            "errcode": 100004,
+                            "errmsg": '用户未找到'
+                        });
+                        res.end('用户未找到');                        
+                    }
 
-                    res.send({
-                        status: 0,
-                        "result": resdata
-                    });
-                }, function(err) {
-                    res.writeHead(500, {
-                        "errcode": 100003,
-                        "errmsg": err.message
-                    });
-                    res.end(err.message);
-                });
+                })
+
 
             } catch (error) {
                 res.writeHead(500, {

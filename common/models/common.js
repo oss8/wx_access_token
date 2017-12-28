@@ -56,6 +56,27 @@ function createNonceStr() {
     return (new Date()).format('yyyyMMdd') + "-" + Math.random().toString(36).substr(2, 9);
 }
 
+Common.DoSQL = function (SQL, Connect) {
+    return new Promise(function (resolve, reject) {
+        EWTRACE(SQL);
+        var dataSource = Connect;
+        if (dataSource == undefined)
+            dataSource = common.app.datasources.main_DBConnect;
+        dataSource.connector.execute(SQL, function (err, result) {
+            if (err) {
+                reject(err);
+            } else {
+                var _result = DelOKPacket(result);
+                if (_.isEmpty(_result) || _result.length == 0) {
+                    resolve([]);
+                }
+                else {
+                    resolve(_result);
+                }
+            }
+        });
+    });
+}
 
 Common.CreateOrders = function (res, req, config) {
     //http://0.0.0.0:3000/createorders?appId=wxb74654c82da12482&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify

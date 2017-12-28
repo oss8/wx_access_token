@@ -210,6 +210,7 @@ module.exports = function(server) {
                 var bsSQL = "select userid from ac_users where openid = '"+data.openid+"'";
                 console.log(bsSQL);
                 Common.DoSQL(bsSQL).then(function(result){
+                    console.log(result);
                     if ( result.length > 0 ){
                         var user = {
                             'openid': result[0].userid

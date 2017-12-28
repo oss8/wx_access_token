@@ -206,45 +206,24 @@ module.exports = function(server) {
                 var data = common.GetOpenIDFromToken(body.token);
 
                 console.log(data);
-                var bsSQL = "select userid from ac_users where openid = '"+data.openid+"'";
-                console.log(bsSQL);
-                common.DoSQL(bsSQL).then(function(result){
-                    console.log(result);
-                    if ( result.length > 0 ){
-                        var user = {
-                            'openid': result[0].userid
-                        };
-                        console.log(user);
-                        common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
-    
-                            res.send({
-                                status: 0,
-                                "result": resdata
-                            });
-                        }, function(err) {
-                            res.writeHead(500, {
-                                "errcode": 100003,
-                                "errmsg": err.message
-                            });
-                            res.end(err.message);
-                        });
-                    }else{
-                        res.writeHead(500, {
-                            "errcode": 100004,
-                            "errmsg": '用户未找到'
-                        });
-                        res.end('用户未找到');                        
-                    }
 
-                },function(err){
-                    console.log(err.message);
+                var user = {
+                    'openid': data.openid
+                };
+                console.log(user);
+                common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
+
+                    res.send({
+                        status: 0,
+                        "result": resdata
+                    });
+                }, function(err) {
                     res.writeHead(500, {
-                        "errcode": 100006,
+                        "errcode": 100003,
                         "errmsg": err.message
                     });
-                    res.end(err.message);                      
-                })
-
+                    res.end(err.message);
+                });
 
             } catch (error) {
                 console.log(error.message);

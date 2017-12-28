@@ -208,6 +208,7 @@ module.exports = function(server) {
 
                 console.log(data);
                 var bsSQL = "select userid from ac_users where openid = '"+data.openid+"'";
+                console.log(bsSQL);
                 Common.DoSQL(bsSQL).then(function(result){
                     if ( result.lenght > 0 ){
                         var user = {
@@ -235,6 +236,13 @@ module.exports = function(server) {
                         res.end('用户未找到');                        
                     }
 
+                },function(err){
+                    console.log(err.message);
+                    res.writeHead(500, {
+                        "errcode": 100006,
+                        "errmsg": err.message
+                    });
+                    res.end(err.message);                      
                 })
 
 

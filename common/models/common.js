@@ -61,7 +61,7 @@ Common.DoSQL = function (SQL, Connect) {
         console.log(SQL);
         var dataSource = Connect;
         if (dataSource == undefined)
-            dataSource = common.app.datasources.main_DBConnect;
+            dataSource = Common.app.datasources.main_DBConnect;
         dataSource.connector.execute(SQL, function (err, result) {
             if (err) {
                 reject(err);

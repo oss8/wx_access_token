@@ -213,6 +213,7 @@ module.exports = function(server) {
                         var user = {
                             'openid': result[0].userid
                         };
+                        console.log(user);
                         common.GetTokenFromOpenID(user, '1h').then(function(resdata) {
     
                             res.send({

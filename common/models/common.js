@@ -58,7 +58,7 @@ function createNonceStr() {
 
 Common.DoSQL = function (SQL, Connect) {
     return new Promise(function (resolve, reject) {
-        EWTRACE(SQL);
+        console.log(SQL);
         var dataSource = Connect;
         if (dataSource == undefined)
             dataSource = common.app.datasources.main_DBConnect;

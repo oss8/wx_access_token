@@ -200,7 +200,6 @@ module.exports = function(server) {
 
     function GetLisence(req, res, next) {
         //根据token从redis中获取access_token 
-
         parsePostBody(req, (chunks) => {
             try {
                 var body = JSON.parse(chunks.toString());

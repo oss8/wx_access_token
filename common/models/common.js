@@ -20,7 +20,7 @@ function raw(args) {
     var keys = Object.keys(args);
     keys = keys.sort()
     var newArgs = {};
-    keys.forEach(function (key) {
+    keys.forEach(function(key) {
         newArgs[key] = args[key];
     });
     var string = '';
@@ -56,29 +56,65 @@ function createNonceStr() {
     return (new Date()).format('yyyyMMdd') + "-" + Math.random().toString(36).substr(2, 9);
 }
 
-Common.DoSQL = function (SQL, Connect) {
-    return new Promise(function (resolve, reject) {
+
+var main_DBConnect = {
+    "host": "rm-wz9q9pyn85tbd3785o.mysql.rds.aliyuncs.com",
+    "port": "3306",
+    "database": "health",
+    "password": "manKang@0307",
+    "name": "main_DBConnect",
+    "connector": "mysql",
+    "user": "mankang",
+    "multipleStatements": true,
+    "pool": {
+        "min": 0,
+        "max": 10,
+        "idleTimeoutMillis": 300
+    }
+};;
+
+var connection = undefined;
+var mysql = require('mysql');
+
+function handleDisconnect() {
+    connection = mysql.createConnection(main_DBConnect); // Recreate the connection, since
+    // the old one cannot be reused.
+
+    connection.connect(function(err) { // The server is either down
+        if (err) { // or restarting (takes a while sometimes).
+            console.log('error when connecting to db:', err);
+            setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+        } // to avoid a hot loop, and to allow our node script to
+    }); // process asynchronous requests in the meantime.
+    // If you're also serving http, display a 503 error.
+    connection.on('error', function(err) {
+        console.log('db error', err);
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+            handleDisconnect(); // lost due to either server restart, or a
+        } else { // connnection idle timeout (the wait_timeout
+            throw err; // server variable configures this)
+        }
+    });
+}
+
+handleDisconnect();
+
+Common.DoSQL = function(SQL) {
+    return new Promise(function(resolve, reject) {
+
         console.log(SQL);
-        var dataSource = Connect;
-        if (dataSource == undefined)
-            dataSource = Common.app.datasources.main_DBConnect;
-        dataSource.connector.execute(SQL, function (err, result) {
+
+        connection.query(SQL, function(err, result) {
             if (err) {
                 reject(err);
             } else {
-                var _result = DelOKPacket(result);
-                if (_.isEmpty(_result) || _result.length == 0) {
-                    resolve([]);
-                }
-                else {
-                    resolve(_result);
-                }
+                resolve(result);
             }
         });
     });
 }
 
-Common.CreateOrders = function (res, req, config) {
+Common.CreateOrders = function(res, req, config) {
     //http://0.0.0.0:3000/createorders?appId=wxb74654c82da12482&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify
     var fee = req.query.fee;
     var notifyurl = req.query.notifyUrl;
@@ -100,7 +136,7 @@ Common.CreateOrders = function (res, req, config) {
         notify_url: notifyurl,
         trade_type: 'NATIVE',
         product_id: '1234567890'
-    }, function (err, result) {
+    }, function(err, result) {
         result.out_trade_no = _out_trade_no;
 
         var nonce_str = createNonceStr();
@@ -118,7 +154,7 @@ Common.CreateOrders = function (res, req, config) {
             prepay_id: prepay_id,
             paySign: _paySignjs,
             out_trade_no: _out_trade_no,
-            code_url: result.code_url  //微信支付生成二维码，在此处返回
+            code_url: result.code_url //微信支付生成二维码，在此处返回
         };
 
         result.threePay = args;
@@ -128,7 +164,7 @@ Common.CreateOrders = function (res, req, config) {
     });
 }
 
-Common.QueryOrders = function (res, req, config) {
+Common.QueryOrders = function(res, req, config) {
 
     var trade_no = req.query.out_trade_no;
 
@@ -139,13 +175,15 @@ Common.QueryOrders = function (res, req, config) {
         pfx: '' //微信商户平台证书
     });
 
-    wxpay.queryOrder({ out_trade_no: trade_no }, function (err, order) {
+    wxpay.queryOrder({
+        out_trade_no: trade_no
+    }, function(err, order) {
         console.log(order);
         res.send(order);
     });
 }
 
-Common.CloseOrders = function (res, req, config) {
+Common.CloseOrders = function(res, req, config) {
 
     var trade_no = req.query.out_trade_no;
 
@@ -156,26 +194,26 @@ Common.CloseOrders = function (res, req, config) {
         pfx: '' //微信商户平台证书
     });
 
-    wxpay.closeOrder({ out_trade_no: trade_no }, function (err, order) {
+    wxpay.closeOrder({
+        out_trade_no: trade_no
+    }, function(err, order) {
         console.log(order);
         res.send(order);
     });
 }
 
-Common.GetAddressFromLBS_GD = function (location_x, location_y) {
-    return new Promise(function (resolve, reject) {
+Common.GetAddressFromLBS_GD = function(location_x, location_y) {
+    return new Promise(function(resolve, reject) {
         var url = "http://restapi.amap.com/v3/geocode/regeo?location=" + location_y + "," + location_x + "&key=974a2c2c4f3fdbc1892cc70aa679dc01";
 
-        needle.get(encodeURI(url), null, function (err, localInfo) {
+        needle.get(encodeURI(url), null, function(err, localInfo) {
 
             if (err) {
                 reject(err);
-            }
-            else {
+            } else {
                 if (localInfo.body.status == 1) {
                     resolve(localInfo.body.regeocode);
-                }
-                else {
+                } else {
                     reject(localInfo.body);
                 }
             }
@@ -184,20 +222,18 @@ Common.GetAddressFromLBS_GD = function (location_x, location_y) {
 }
 
 
-Common.GetAddressFromLBS_TX = function (location_x, location_y) {
-    return new Promise(function (resolve, reject) {
+Common.GetAddressFromLBS_TX = function(location_x, location_y) {
+    return new Promise(function(resolve, reject) {
         var url = "http://apis.map.qq.com/ws/geocoder/v1/?location=" + location_x + "," + location_y + "&key=6UWBZ-BRKR3-YWG3Y-337NE-DRCMZ-EGBF7";
 
-        needle.get(encodeURI(url), null, function (err, localInfo) {
+        needle.get(encodeURI(url), null, function(err, localInfo) {
 
             if (err) {
                 reject(err);
-            }
-            else {
+            } else {
                 if (localInfo.body.status == 0) {
                     resolve(localInfo.body.result);
-                }
-                else {
+                } else {
                     reject(localInfo.body);
                 }
             }
@@ -206,52 +242,57 @@ Common.GetAddressFromLBS_TX = function (location_x, location_y) {
 }
 
 
-Common.CreateMenu = function (menu, access_token) {
+Common.CreateMenu = function(menu, access_token) {
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         var url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + access_token;
 
-        needle.post(encodeURI(url), menu, { json: true }, function (err, resp) {
+        needle.post(encodeURI(url), menu, {
+            json: true
+        }, function(err, resp) {
             // you can pass params as a string or as an object.
             if (err) {
                 //cb(err, { status: 0, "result": "" });
                 EWTRACE(err.message);
                 reject(err);
-            }
-            else {
+            } else {
                 resolve(resp.body);
             }
         });
     });
 }
 
-Common.SendTemplate = function (data, access_token) {
+Common.SendTemplate = function(data, access_token) {
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         var url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + access_token;
 
-        needle.post(encodeURI(url), data, { json: true }, function (err, resp) {
+        needle.post(encodeURI(url), data, {
+            json: true
+        }, function(err, resp) {
             // you can pass params as a string or as an object.
             if (err) {
                 //cb(err, { status: 0, "result": "" });
                 EWTRACE(err.message);
                 reject(err);
-            }
-            else {
+            } else {
                 resolve(resp.body);
             }
         });
     });
 }
 
-Common.GetTokenFromOpenID = function (userinfo, time) {
+Common.GetTokenFromOpenID = function(userinfo, time) {
     delete userinfo.exp;
-    if ( _.isUndefined(time)){
+    if (_.isUndefined(time)) {
         time = '1d';
     }
     var cert = rf.readFileSync("jwt_rsa_private_key.pem", "utf-8");
-    return new Promise(function (resolve, reject) {
-        jwt.sign(userinfo, cert, { algorithm: 'RS256', expiresIn: time }, function (err, token) {
+    return new Promise(function(resolve, reject) {
+        jwt.sign(userinfo, cert, {
+            algorithm: 'RS256',
+            expiresIn: time
+        }, function(err, token) {
             if (err) {
                 reject(err);
             } else {
@@ -261,7 +302,7 @@ Common.GetTokenFromOpenID = function (userinfo, time) {
     });
 }
 
-Common.GetOpenIDFromToken = function (token) {
+Common.GetOpenIDFromToken = function(token) {
 
     var rf = require("fs");
     var secret = rf.readFileSync("jwt_rsa_public_key.pem", "utf-8");
@@ -275,28 +316,31 @@ Common.GetOpenIDFromToken = function (token) {
     }
 }
 
-Common.self_getToken = function (token, appId) {
-    return new Promise(function (resolve, reject) {
-        utils.get(token).then(function (data) {
+Common.self_getToken = function(token, appId) {
+    return new Promise(function(resolve, reject) {
+        utils.get(token).then(function(data) {
 
             if (data) { //获取到值--往下传递  
                 console.log('redis获取到值');
-                var p = { "access_token": data };
+                var p = {
+                    "access_token": data
+                };
                 //res.send(p);
                 resolve(p);
-            }
-            else {        //没获取到值--从微信服务器端获取,并往下传递  
+            } else { //没获取到值--从微信服务器端获取,并往下传递  
                 console.log('redis中无值');
-                wechatApi.updateAccessToken(appId).then(function (data) {
-                    utils.set(token, `${data.access_token}`, 7180).then(function (result) {
+                wechatApi.updateAccessToken(appId).then(function(data) {
+                    utils.set(token, `${data.access_token}`, 7180).then(function(result) {
                         if (result == 'OK') {
                             //res.send(data);
                             resolve(data);
-                        }
-                        else {
+                        } else {
                             //res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });
 
-                            reject({ "errcode": 100003, "errmsg": "redis error" });
+                            reject({
+                                "errcode": 100003,
+                                "errmsg": "redis error"
+                            });
                             //res.end();
                         }
                     })
@@ -306,20 +350,21 @@ Common.self_getToken = function (token, appId) {
     });
 }
 
-Common.self_sendNotify = function (res, access_token, openId, context) {
+Common.self_sendNotify = function(res, access_token, openId, context) {
 
     var url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + access_token;
 
     var SendData = {
         "touser": openId,
         "msgtype": "text",
-        "text":
-        {
+        "text": {
             "content": context
         }
     };
 
-    needle.post(encodeURI(url), SendData, { json: true }, function (error, resp) {
+    needle.post(encodeURI(url), SendData, {
+        json: true
+    }, function(error, resp) {
 
         if (!error) {
             console.log(resp.body);
@@ -337,9 +382,9 @@ Common.self_sendNotify = function (res, access_token, openId, context) {
     })
 }
 
-Common.self_getNickName = function (res, access_token, openId) {
+Common.self_getNickName = function(res, access_token, openId) {
 
-    request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + "&openid=" + openId + "&lang=zh_CN", function (error, resp, json) {
+    request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + "&openid=" + openId + "&lang=zh_CN", function(error, resp, json) {
 
         if (!error && resp.statusCode == 200) {
             var body = JSON.parse(json);
@@ -357,7 +402,7 @@ Common.self_getNickName = function (res, access_token, openId) {
     })
 }
 
-Common.self_getTicket = function (res, access_token, url) {
+Common.self_getTicket = function(res, access_token, url) {
 
     var winxinconfig = {
         grant_type: 'client_credential',
@@ -366,7 +411,7 @@ Common.self_getTicket = function (res, access_token, url) {
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
 
-    request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function (error, resp, json) {
+    request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function(error, resp, json) {
         if (!error && resp.statusCode == 200) {
             var ticketMap = JSON.parse(json);
             console.log('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
@@ -385,18 +430,27 @@ Common.self_getTicket = function (res, access_token, url) {
     })
 }
 
-Common.self_getQRCode = function (res, access_token, strQR, type) {
+Common.self_getQRCode = function(res, access_token, strQR, type) {
 
-    var pp = { "expire_seconds": 2592000, "action_name": type, "action_info": { "scene": { "scene_str": strQR } } };
+    var pp = {
+        "expire_seconds": 2592000,
+        "action_name": type,
+        "action_info": {
+            "scene": {
+                "scene_str": strQR
+            }
+        }
+    };
     var url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + access_token;
 
-    needle.post(encodeURI(url), pp, { json: true }, function (err, resp) {
+    needle.post(encodeURI(url), pp, {
+        json: true
+    }, function(err, resp) {
         // you can pass params as a string or as an object.
         if (err) {
             res.writeHead(500, err);
             res.end(err.message);
-        }
-        else {
+        } else {
             console.log(resp.body.url);
             res.send(resp.body.url);
         }

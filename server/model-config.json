@@ -31,14 +31,14 @@
   },
   "utils": {
     "dataSource": "db",
-    "public": true
+    "public": false
   },
   "wechatapi": {
     "dataSource": "db",
-    "public": true
+    "public": false
   },
   "common": {
-    "dataSource": "db",
+    "dataSource": "main_DBConnect",
     "public": true
   }
 }

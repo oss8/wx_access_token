@@ -248,7 +248,7 @@ module.exports = function(server) {
 
 
             } catch (error) {
-                console.log(err.message);
+                console.log(error.message);
                 res.writeHead(500, {
                     "errcode": 100003,
                     "errmsg": error.message

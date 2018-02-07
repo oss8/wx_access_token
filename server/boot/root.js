@@ -140,6 +140,31 @@ module.exports = function(server) {
         });
     };
 
+    //http://style.man-kang.com:3000/sendtemplate?appId=wx397644d24ec87fd1
+    //{
+    //     "touser": "oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU",
+    //     "template_id": "B_uOplB1dlCWSZqYxgHR5dXH3D7v3WFhtttRH16DTp0",
+    //     "data": {
+    //         "first": {
+    //             "value": "手环测量结果推送"
+    //         },
+    //         "keyword1": {
+    //             "value": "geling"
+    //         },
+    //         "keyword2": {
+    //             "value": "test"
+    //         },
+    //         "keyword3": {
+    //             "value": "曼康云"
+    //         },
+    //         "keyword4": {
+    //             "value": 124
+    //         },
+    //         "remark": {
+    //             "value": "曼康云-祝你健康每一天"
+    //         }
+    //     }
+    // }
     function sendTemplate(req, res, next, config) {
         //根据token从redis中获取access_token 
         var appId = req.query.appId;

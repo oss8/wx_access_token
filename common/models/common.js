@@ -423,7 +423,7 @@ Common.self_getNickName = function(res, access_token, openId) {
     })
 }
 
-Common.self_getTicket = function(res, access_token, url) {
+Common.self_getTicket = function(res, access_token, url, appId) {
 
     var winxinconfig = {
         grant_type: 'client_credential',

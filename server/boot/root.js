@@ -411,7 +411,7 @@ module.exports = function(server) {
         }
 
         common.self_getToken(config.wechat.token, appId).then(function(data) {
-            common.self_getTicket(res, data.access_token, url)
+            common.self_getTicket(res, data.access_token, url, appId)
         }, function(err) {
             res.writeHead(500, err);
             res.end();

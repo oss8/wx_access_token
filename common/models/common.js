@@ -256,7 +256,7 @@ Common.requestMediaList = function(access_token, offset, count){
             if (err) {
                 reject(err);
             } else {
-                console.log(mediaList);
+                console.log(mediaList.body);
                 resolve(JSON.parse(iconv.decode(mediaList.body, 'utf-8')));
             }
         });

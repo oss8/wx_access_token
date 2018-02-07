@@ -148,7 +148,7 @@ module.exports = function(server) {
             var str = chunks.toString();
             var WXData = JSON.parse(chunks.toString());
             common.self_getToken(config.wechat.token, appId).then(function(token) {
-                common.CreateMenu(menu, token.access_token).then(function(data) {
+                common.SendTemplate(menu, token.access_token).then(function(data) {
                     console.log(data);
                     res.send(data);
                 }, function(err) {
@@ -316,7 +316,7 @@ module.exports = function(server) {
 
     }
 
-
+    //http://style.man-kang.com:3000/sendnotify?appId=wx397644d24ec87fd1&openid=oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU&context=test
     function sendNotify(req, res, next, config) {
         //根据token从redis中获取access_token  
         var appId = req.query.appId;
@@ -352,6 +352,7 @@ module.exports = function(server) {
 
     }
 
+    //http://style.man-kang.com:3000/nickname?appId=wx397644d24ec87fd1&openid=oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU
     function getNickName(req, res, next, config) {
         //根据token从redis中获取access_token  
         var appId = req.query.appId;
@@ -374,6 +375,7 @@ module.exports = function(server) {
 
     }
 
+    //http://style.man-kang.com:3000/qrcode?appId=wx397644d24ec87fd1&QRCode=www.baidu.com
     function getQRCode(req, res, next, config, type) {
         //根据token从redis中获取access_token  
         var appId = req.query.appId;
@@ -396,7 +398,7 @@ module.exports = function(server) {
 
     }
 
-
+    //http://style.man-kang.com:3000/ticket?appId=wx397644d24ec87fd1&url=www.baidu.com
     function getTicket(req, res, next, config) {
         var appId = req.query.appId;
         var url = req.query.url;

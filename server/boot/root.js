@@ -149,7 +149,7 @@ module.exports = function(server) {
             console.log(str);
             var WXData = JSON.parse(chunks.toString());
             common.self_getToken(config.wechat.token, appId).then(function(token) {
-                common.SendTemplate(menu, token.access_token).then(function(data) {
+                common.SendTemplate(WXData, token.access_token).then(function(data) {
                     console.log(data);
                     res.send(data);
                 }, function(err) {

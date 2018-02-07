@@ -13,7 +13,7 @@ var rf = require("fs");
 var jwt = require('jsonwebtoken');
 var WXPay = require('weixin-pay');
 
-
+var iconv = require("iconv-lite");
 
 
 function raw(args) {
@@ -241,6 +241,26 @@ Common.GetAddressFromLBS_TX = function(location_x, location_y) {
     });
 }
 
+Common.requestMediaList = function(access_token, offset, count){
+    return new Promise(function(resolve, reject) {
+        var url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=" + access_token;
+        var data = {
+            "type": "news",
+            "offset": offset,
+            "count": count
+        };
+        needle.post(encodeURI(url), JSON.stringify(data), {
+            'Content-Type': 'text/plain'
+        }, function(err, mediaList) {
+            // you can pass params as a string or as an object.
+            if (err) {
+                reject(err);
+            } else {
+                resolve(JSON.parse(iconv.decode(mediaList.body, 'utf-8')));
+            }
+        });
+    });    
+}
 
 Common.CreateMenu = function(menu, access_token) {
 

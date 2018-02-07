@@ -69,6 +69,9 @@ module.exports = function(server) {
         } else if (req.path == '/createmenu') {
 
             CreateMenu(req, res, next, config)
+        } else if (req.path == '/requestMediaList') {
+
+            requestMediaList(req, res, next, config)            
         } else if (req.path == '/getaddress') {
 
             getAddress(req, res, next)
@@ -88,7 +91,7 @@ module.exports = function(server) {
             next();
         }
     })
-
+    
     function getAddress2(req, res, next) {
         //根据token从redis中获取access_token  
         var location_x = req.query.location_x;
@@ -179,6 +182,27 @@ module.exports = function(server) {
                 });
             });
         });
+    }
+
+    function requestMediaList(req, res, next, config) {
+        //根据token从redis中获取access_token 
+        var appId = req.query.appId;
+        var offset = req.query.offset;
+        var count = req.query.count;
+
+        common.self_getToken(config.wechat.token, appId).then(function(token) {
+            common.requestMediaList(token.access_token, offset, count).then(function(data) {
+                console.log(data);
+                res.send(data);
+            }, function(err) {
+                res.writeHead(500, {
+                    "errcode": 100003,
+                    "errmsg": err.message
+                });
+                res.end(err.message);
+            });
+        });
+
     }
 
     function GetTokenFromOpenID(req, res, next) {

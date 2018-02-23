@@ -14,18 +14,9 @@
             "appSecret": "d28771d2292343ace452ebcf35d24c6f",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "grant_type": "client_credential",
-            "token": "test-health1"
-        }
-    },
-    {
-        "wechat": {
-            "appID": "wx012a9130903a7396",
-            "appSecret": "R9E2b714J5dmRKK93reYXt3m8K9j11ux",
-            "prefix": "https://api.weixin.qq.com/cgi-bin/",
-            "grant_type": "client_credential",
-            "token": "renmazuo",
+            "token": "test-health1",
             "mch_id": "1459195002",
-            "partener_key": "R9E2b714J5dmRKK93reYXt3m8K9j11ux"
+            "partener_key": "R9E2b714J5dmRKK93reYXt3m8K9j11ux"            
         }
     },
     {

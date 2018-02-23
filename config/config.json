@@ -27,5 +27,14 @@
             "mch_id": "1254501201",
             "partener_key": "1231314202eshineem2015weixinpays"
         }
-    }
+    },
+    {
+        "wechat": {
+            "appID": "wx13eaa53cf5121bce",
+            "appSecret": "99fb2142a2582deea903866885964b91",
+            "prefix": "https://api.weixin.qq.com/cgi-bin/",
+            "grant_type": "client_credential",
+            "token": "zhilian-tech"
+        }
+    }    
 ]

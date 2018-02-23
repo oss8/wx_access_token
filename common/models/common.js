@@ -330,6 +330,7 @@ Common.GetOpenIDFromToken = function(token) {
     var decoded = null;
     try {
         decoded = jwtdecode.decode(token, secret);
+        console.log(token);
         console.log(decoded);
         return decoded;
     } catch (err) {

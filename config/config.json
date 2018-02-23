@@ -19,12 +19,12 @@
     },
     {
         "wechat": {
-            "appID": "wxb74654c82da12482",
-            "appSecret": "d28771d2292343ace452ebcf35d24c6f",
+            "appID": "wx6db71f534596ba91",
+            "appSecret": "0c927b5bc9aad6fadf56818fb802da47",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "grant_type": "client_credential",
-            "token": "yixiang",
-            "mch_id": "1254501201",
+            "token": "renmazuo",
+            "mch_id": "1497299502",
             "partener_key": "1231314202eshineem2015weixinpays"
         }
     },

@@ -132,7 +132,7 @@ Common.CreateOrders = function(res, req, config) {
         body: '支付',
         out_trade_no: _out_trade_no,
         total_fee: fee,
-        spbill_create_ip: req.host,
+        spbill_create_ip: '192.168.0.1',
         notify_url: notifyurl,
         trade_type: 'NATIVE',
         product_id: '1234567890'

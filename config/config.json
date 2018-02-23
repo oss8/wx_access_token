@@ -19,8 +19,8 @@
     },
     {
         "wechat": {
-            "appID": "wx6db71f534596ba91",
-            "appSecret": "0c927b5bc9aad6fadf56818fb802da47",
+            "appID": "wxdb5ce1271ea3e6d6",
+            "appSecret": "4cfff515c479ace8432def88de4ef5ba",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "grant_type": "client_credential",
             "token": "renmazuo",

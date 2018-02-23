@@ -171,7 +171,7 @@ Common.QueryOrders = function(res, req, config) {
     var wxpay = WXPay({
         appid: config.wechat.appID,
         mch_id: config.wechat.mch_id,
-        partner_key: config.wechat.partner_key, //微信商户平台API密钥
+        partner_key: config.wechat.partener_key, //微信商户平台API密钥
         pfx: '' //微信商户平台证书
     });
 
@@ -190,7 +190,7 @@ Common.CloseOrders = function(res, req, config) {
     var wxpay = WXPay({
         appid: config.wechat.appID,
         mch_id: config.wechat.mch_id,
-        partner_key: config.wechat.partner_key, //微信商户平台API密钥
+        partner_key: config.wechat.partener_key, //微信商户平台API密钥
         pfx: '' //微信商户平台证书
     });
 

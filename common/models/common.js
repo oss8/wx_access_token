@@ -56,6 +56,18 @@ function createNonceStr() {
     return (new Date()).format('yyyyMMdd') + "-" + Math.random().toString(36).substr(2, 9);
 }
 
+function getIPAdress() {
+    var interfaces = require('os').networkInterfaces();
+    for (var devName in interfaces) {
+        var iface = interfaces[devName];
+        for (var i = 0; i < iface.length; i++) {
+            var alias = iface[i];
+            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+                return alias.address;
+            }
+        }
+    }
+}    
 
 var main_DBConnect = {
     "host": "rm-wz9q9pyn85tbd3785o.mysql.rds.aliyuncs.com",
@@ -132,7 +144,7 @@ Common.CreateOrders = function(res, req, config) {
         body: '支付',
         out_trade_no: _out_trade_no,
         total_fee: fee,
-        spbill_create_ip: '192.168.0.1',
+        spbill_create_ip: getIPAdress(),
         notify_url: notifyurl,
         trade_type: 'NATIVE',
         product_id: '1234567890'

@@ -152,7 +152,6 @@ Common.CreateOrders_AliPay = function(res, req, config) {
         var _out_trade_no = (new Date()).format('yyyyMMdd') + "-alipay" + Math.random().toString(36).substr(2, 9);
 
         var _fee = req.query.fee;
-        _fee = 0.01;
 
         alipay.precreate({
             subject: config.wechat.alipay.companyName,

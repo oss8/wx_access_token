@@ -67,7 +67,7 @@ function getIPAdress() {
             }
         }
     }
-}    
+}
 
 var main_DBConnect = {
     "host": "rm-wz9q9pyn85tbd3785o.mysql.rds.aliyuncs.com",
@@ -125,20 +125,71 @@ Common.DoSQL = function(SQL) {
         });
     });
 }
+const fs = require('fs');
+const path = require('path');
+const Alipay = require('alipay2');
+
+
+//http://0.0.0.0:3000/alipayorders?appId=wxdb5ce1271ea3e6d6&inside_no=20180223-a01fwp9ir&notifyUrl=http://style.man-kang.com:8800/api/weChatEvents/wxnotify&fee=1
+Common.CreateOrders_AliPay = function(res, req, config) {
+        // 目前支付宝秘钥文件，放在config目录下，aliPay的AppID命名的子目录内
+        // 后期大量客户使用时，考虑将文件内容放入DB，但导入时不能直接放入因为有回车符，建议读出内容后，用base64加密后放入，使用时用base64解密
+        // 文件读出后，base64编码
+        // var _base64 = fs.readFileSync(path.join(__dirname, '../../config/',config.wechat.alipay.aliAppID.toString(),'/rsa_private_key.pem')).toString('base64');
+        // // base64解码
+        // var _context = Buffer(_base64, 'base64').toString();
+
+        const alipay = new Alipay({
+            notify_url: req.query.notifyUrl,
+            appId: config.wechat.alipay.aliAppID,
+            appKey: fs.readFileSync(path.join(__dirname, '../../config/',config.wechat.alipay.aliAppID.toString(),'/rsa_private_key.pem')),
+            alipayPublicKey: fs.readFileSync(path.join(__dirname, '../../config/',config.wechat.alipay.aliAppID.toString(),'/rsa_public_key.pem')),
+            charset: 'utf-8',
+            sign_type: 'RSA'
+        });
+        console.log(req.query.notifyUrl);
+
+        var _out_trade_no = (new Date()).format('yyyyMMdd') + "-alipay" + Math.random().toString(36).substr(2, 9);
+
+        var _fee = req.query.fee;
+        _fee = 0.01;
+
+        alipay.precreate({
+            subject: config.wechat.alipay.companyName,
+            out_trade_no: _out_trade_no,
+            total_amount: _fee,
+            timeout_express: '10m'
+        }).then(function(result) {
+
+            result.out_trade_no = _out_trade_no;
+            result.app_id = config.wechat.alipay.aliAppID;
+            result.in_trade_no = req.query.inside_no;
+            console.log(result);
+
+            res.send(result);
+        }).catch(function(err) {
+            console.log(err);
+            res.send(err);
+        });
+
+
+}
+
+
 
 Common.CreateOrders = function(res, req, config) {
-    //http://0.0.0.0:3000/createorders?appId=wxb74654c82da12482&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify
+    //http://0.0.0.0:3000/createorders?appId=wxdb5ce1271ea3e6d6&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify&inside_no=123232423
     var fee = req.query.fee;
     var notifyurl = req.query.notifyUrl;
 
     var wxpay = WXPay({
         appid: config.wechat.appID,
         mch_id: config.wechat.mch_id,
-        partner_key: config.wechat.partener_key, //微信商户平台API密钥
+        partner_key: config.wechat.appSecret, //微信商户平台API密钥
         pfx: '' //微信商户平台证书
     });
 
-    var _out_trade_no = (new Date()).format('yyyyMMdd') + "-" + Math.random().toString(36).substr(2, 9);
+    var _out_trade_no = (new Date()).format('yyyyMMdd') + "-wxpay" + Math.random().toString(36).substr(2, 9);
 
     wxpay.createUnifiedOrder({
         body: '支付',
@@ -150,6 +201,7 @@ Common.CreateOrders = function(res, req, config) {
         product_id: '1234567890'
     }, function(err, result) {
         result.out_trade_no = _out_trade_no;
+        result.inside_no = req.query.inside_no;
 
         var nonce_str = createNonceStr();
         var timeStamp = createTimeStamp();
@@ -166,6 +218,7 @@ Common.CreateOrders = function(res, req, config) {
             prepay_id: prepay_id,
             paySign: _paySignjs,
             out_trade_no: _out_trade_no,
+            in_trade_no: req.query.inside_no,
             code_url: result.code_url //微信支付生成二维码，在此处返回
         };
 
@@ -183,7 +236,7 @@ Common.QueryOrders = function(res, req, config) {
     var wxpay = WXPay({
         appid: config.wechat.appID,
         mch_id: config.wechat.mch_id,
-        partner_key: config.wechat.partener_key, //微信商户平台API密钥
+        partner_key: config.wechat.appSecret, //微信商户平台API密钥
         pfx: '' //微信商户平台证书
     });
 
@@ -202,7 +255,7 @@ Common.CloseOrders = function(res, req, config) {
     var wxpay = WXPay({
         appid: config.wechat.appID,
         mch_id: config.wechat.mch_id,
-        partner_key: config.wechat.partener_key, //微信商户平台API密钥
+        partner_key: config.wechat.appSecret, //微信商户平台API密钥
         pfx: '' //微信商户平台证书
     });
 
@@ -253,7 +306,7 @@ Common.GetAddressFromLBS_TX = function(location_x, location_y) {
     });
 }
 
-Common.requestMediaList = function(access_token, offset, count){
+Common.requestMediaList = function(access_token, offset, count) {
     return new Promise(function(resolve, reject) {
         var url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=" + access_token;
         var data = {
@@ -272,7 +325,7 @@ Common.requestMediaList = function(access_token, offset, count){
                 resolve(JSON.parse(_body));
             }
         });
-    });    
+    });
 }
 
 Common.CreateMenu = function(menu, access_token) {

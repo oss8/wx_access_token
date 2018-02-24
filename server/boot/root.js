@@ -81,6 +81,9 @@ module.exports = function(server) {
         } else if (req.path == '/createorders') {
 
             common.CreateOrders(res, req, config);
+        } else if (req.path == '/alipayorders') {
+
+            common.CreateOrders_AliPay(res, req, config);
         } else if (req.path == '/queryorders') {
 
             common.QueryOrders(res, req, config);

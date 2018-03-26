@@ -39,6 +39,12 @@ module.exports = function(server) {
         } else if (req.path == '/ticket') {
 
             getTicket(req, res, next, config)
+        } else if (req.path == '/userConnect') {
+
+            userConnect(req, res, next, config)
+        } else if (req.path == '/getUserInfo') {
+
+            getUserInfo(req, res, next, config)                        
         } else if (req.path == '/qrcode') {
 
             getQRCode(req, res, next, config, 'QR_STR_SCENE')
@@ -71,7 +77,7 @@ module.exports = function(server) {
             CreateMenu(req, res, next, config)
         } else if (req.path == '/requestMediaList') {
 
-            requestMediaList(req, res, next, config)            
+            requestMediaList(req, res, next, config)
         } else if (req.path == '/getaddress') {
 
             getAddress(req, res, next)
@@ -94,7 +100,7 @@ module.exports = function(server) {
             next();
         }
     })
-    
+
     function getAddress2(req, res, next) {
         //根据token从redis中获取access_token  
         var location_x = req.query.location_x;
@@ -380,6 +386,35 @@ module.exports = function(server) {
         });
 
     }
+
+    //http://style.man-kang.com:3000/userConnect?appId=wx397644d24ec87fd1&bu=http://style.man-kang.com:3000/getUserInfo
+    function userConnect(req, res, next, config) {
+        //根据token从redis中获取access_token  
+        var appId = req.query.appId;
+        request('https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appId + "&redirect_uri=http://style.man-kang.com:3000/getUserInfo&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect", function(error, resp, json) {
+
+            if (!error && resp.statusCode == 200) {
+                var body = JSON.parse(json);
+                console.log(body);
+                if (_.isUndefined(body.errcode)) {
+                    res.send(body);
+                } else {
+                    res.writeHead(403, body);
+                    res.end(JSON.stringify(body));
+                }
+    
+            } else {
+                res.send(resp);
+            }            
+        });
+    }
+
+    function getUserInfo(req, res, next, config) {
+        //根据token从redis中获取access_token  
+        console.log(req.query.code);
+        console.log(req.query.userid);
+        res.end();
+    }    
 
     //http://style.man-kang.com:3000/nickname?appId=wx397644d24ec87fd1&openid=oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU
     function getNickName(req, res, next, config) {

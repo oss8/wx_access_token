@@ -181,12 +181,19 @@ module.exports = function(server) {
                             if (!error && resp.statusCode == 200) {
                                 var body = JSON.parse(json);
                                 console.log(body);
-                                var token = GetTokenFromOpenID(body);
+                                common.GetTokenFromOpenID(body).then(function(data) {
+                                    console(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + res.query.status);
+                                    res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + res.query.status);
+                                    res.writeHead(200);
+                                    res.end();
+                                }, function(err) {
+                                    res.writeHead(500, {
+                                        "errcode": 100003,
+                                        "errmsg": err.message
+                                    });
+                                    res.end(err.message);
+                                });
 
-                                console(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + res.query.status);
-                                res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + res.query.status);
-                                res.writeHead(200);
-                                res.end();
                     
                             } else {
                                 res.send(resp);

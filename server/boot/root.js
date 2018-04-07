@@ -181,12 +181,12 @@ module.exports = function(server) {
                             if (!error && resp.statusCode == 200) {
                                 var body = JSON.parse(json);
                                 console.log(body);
-                                if (_.isUndefined(body.errcode)) {
-                                    res.send(body);
-                                } else {
-                                    res.writeHead(403, body);
-                                    res.end(JSON.stringify(body));
-                                }
+                                var token = GetTokenFromOpenID(body);
+
+                                console(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + res.query.status);
+                                res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + res.query.status);
+                                res.writeHead(200);
+                                res.end();
                     
                             } else {
                                 res.send(resp);
@@ -209,9 +209,7 @@ module.exports = function(server) {
         
         
 
-        /*res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + res.query.status);
-        res.writeHead(200);
-        res.end();*/
+
     }
 
     function wechat_userinfo(req, res, next, config) {

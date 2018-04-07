@@ -167,6 +167,22 @@ module.exports = function(server) {
         res.end();
     }
 
+    function urlencode(obj) {
+        if (typeof obj === 'object') {
+            return Object.keys(obj).map(function(k) {
+                var ks = encodeURIComponent(k) + '=';
+                if (Array.isArray(obj[k])) {
+                    return obj[k].map(function(v) {
+                        return ks + encodeURIComponent(v);
+                    }).join('&');
+                } else {
+                    return ks + encodeURIComponent(obj[k]);
+                }
+            }).join('&');
+        }
+        return '';
+    };
+
     function wechat_userinfo(req, res, next, config) {
         //根据token从redis中获取access_token 
         var appId = req.query.appId;

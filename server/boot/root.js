@@ -15,9 +15,18 @@ module.exports = function(server) {
 
     router.use(function(req, res, next) {
         var appId = req.query.appId;
+        var bu = "";
         console.log("appId:" + appId);
         if (_.isUndefined(appId)) {
             appId = 'wx397644d24ec87fd1';
+        }
+
+        if ( req.path == '/wechat_callback'){
+            bu = appId.substr(appId.indexOf("_")+1,appId.length);
+            appId = appId.substr(0,appId.indexOf("_"));
+
+            console.log("appId:" + appId);
+            console.log("bu:" + bu);
         }
 
         var config = _.find(configs, function(item) {
@@ -42,7 +51,7 @@ module.exports = function(server) {
             wechat_userinfo(req, res, next, config)            
         } else if (req.path == '/wechat_callback') {
 
-            wechat_callback(req, res, next, config)               
+            wechat_callback(req, res, next, config, bu)               
         } else if (req.path == '/ticket') {
 
             getTicket(req, res, next, config)
@@ -156,12 +165,11 @@ module.exports = function(server) {
         });
     };
 
-    function wechat_callback(req, res, next, config) {
+    function wechat_callback(req, res, next, config, bu) {
         //根据token从redis中获取access_token 
 
         console.log("wechat_callback begin")
         var appId = req.query.appId;
-        var bu = req.query.bu
         var token = req.query.code;
 
         console.log(req.query);

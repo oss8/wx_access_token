@@ -36,6 +36,12 @@ module.exports = function(server) {
         if (req.path == '/token') {
 
             getToken(req, res, next, config);
+        } else if (req.path == '/wechat_userinfo') {
+
+            wechat_userinfo(req, res, next, config)            
+        } else if (req.path == '/wechat_callback') {
+
+            wechat_userinfo(req, res, next, config)               
         } else if (req.path == '/ticket') {
 
             getTicket(req, res, next, config)
@@ -149,6 +155,29 @@ module.exports = function(server) {
         });
     };
 
+    function wechat_callback(req, res, next, config) {
+        //根据token从redis中获取access_token 
+        var appId = req.query.appId;
+        var bu = req.query.bu
+        var token = req.query.code;
+
+        res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + resp.body.status);
+        res.end();
+    }
+
+    function wechat_userinfo(req, res, next, config) {
+        //根据token从redis中获取access_token 
+        var appId = req.query.appId;
+        var str = req.query.bu
+
+        callback = "http://" + req.headers.host + "/auth/wechat_callback?bu="+str;
+        url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri="+callback+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+
+        console.log(callback);
+        console.log(url);
+        res.writeHead(302, url);
+        res.end();
+    }
     //http://style.man-kang.com:3000/sendtemplate?appId=wx397644d24ec87fd1
     //{
     //     "touser": "oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU",

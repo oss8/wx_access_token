@@ -6,6 +6,7 @@
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "token": "zhilian-tech3",
             "mch_id": "1501531441",
+            "wechat_callback":"http://w.zlian-tech.com/wechat_callback?",
             "alipay":{
                 "aliAppID":2017082308338778,
                 "companyName":"知联科技"

@@ -155,6 +155,7 @@ module.exports = function(server) {
         });
     };
 
+    // 需要在微信后台，设置白名单
     function wechat_callback(req, res, next, config) {
         //根据token从redis中获取access_token 
 
@@ -166,27 +167,26 @@ module.exports = function(server) {
         var token = req.query.code;
         var _state = req.query.state;
 
-        console.log("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code");
+        //console.log("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code");
 
         request("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code", function(error, resp, json) {
 
             if (!error && resp.statusCode == 200) {
                 var body = JSON.parse(json);
-                console.log(body);
+                //console.log(body);
                 if (_.isUndefined(body.errcode)) {
                     //res.send(body);
 
                     common.self_getToken(config.wechat.token, appId).then(function(data) {
                         //common.self_getNickName(res, data.access_token, body.openid)
-                        console.log('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN");
+                        //console.log('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN");
                         request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN", function(error, resp, json) {
 
                             if (!error && resp.statusCode == 200) {
                                 var body = JSON.parse(json);
-                                console.log(body);
+                                //console.log(body);
                                 common.GetTokenFromOpenID(body).then(function(data) {
-                                    console.log(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state);
-                                    //res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state);
+                                    //console.log(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state);
 
                                     var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state;
 
@@ -239,8 +239,6 @@ module.exports = function(server) {
         var callback = config.wechat.wechat_callback + querystring.stringify({ appId: appId + "_" + str });
         var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+encodeURI(callback)+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
 
-        console.log(encodeURI(callback));
-        console.log(url);
         res.setHeader('Location', url);
         res.writeHead(302);
         res.end();

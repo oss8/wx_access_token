@@ -1,41 +1,15 @@
 [
     {
         "wechat": {
-            "appID": "wx397644d24ec87fd1",
-            "appSecret": "57e9a3e879a08b817e1163a20e767ca3",
-            "prefix": "https://api.weixin.qq.com/cgi-bin/",
-            "token": "mankang-health-token"
-        }
-    },
-    {
-        "wechat": {
-            "appID": "wx012a9130903a7396",
-            "appSecret": "R9E2b714J5dmRKK93reYXt3m8K9j11ux",
-            "prefix": "https://api.weixin.qq.com/cgi-bin/",
-            "token": "test-health1",
-            "mch_id": "1459195002"
-        }
-    },
-    {
-        "wechat": {
             "appID": "wx13eaa53cf5121bce",
             "appSecret": "99fb2142a2582deea903866885964b91",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
-            "token": "zhilian-tech"
-        }
-    },
-    {
-        "wechat": {
-            "appID": "wxdb5ce1271ea3e6d6",
-            "appSecret": "4cfff515c479ace8432def88de4ef5ba",
-            "prefix": "https://api.weixin.qq.com/cgi-bin/",
-            "token": "ye-shuai",
-            "mch_id":"1497299502",
+            "token": "zhilian-tech",
+            "mch_id": "1501531441",
             "alipay":{
                 "aliAppID":2017082308338778,
                 "companyName":"人马座"
             }
         }
-
-    }     
+    } 
 ]

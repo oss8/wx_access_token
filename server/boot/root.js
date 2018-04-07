@@ -167,29 +167,13 @@ module.exports = function(server) {
         res.end();
     }
 
-    function urlencode(obj) {
-        if (typeof obj === 'object') {
-            return Object.keys(obj).map(function(k) {
-                var ks = encodeURIComponent(k) + '=';
-                if (Array.isArray(obj[k])) {
-                    return obj[k].map(function(v) {
-                        return ks + encodeURIComponent(v);
-                    }).join('&');
-                } else {
-                    return ks + encodeURIComponent(obj[k]);
-                }
-            }).join('&');
-        }
-        return '';
-    };
-
     function wechat_userinfo(req, res, next, config) {
         //根据token从redis中获取access_token 
         var appId = req.query.appId;
         var str = req.query.bu
 
         var callback = "http://" + req.headers.host + "/wechat_callback?bu="+str;
-        var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+urlencode(callback)+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+        var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+encodeURI(callback)+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
 
         console.log(callback);
         console.log(url);

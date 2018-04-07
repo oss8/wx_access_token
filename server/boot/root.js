@@ -164,6 +164,8 @@ module.exports = function(server) {
         var bu = appId.substr(appId.indexOf("_")+1,appId.length);
         var appId = appId.substr(0,appId.indexOf("_"));
         var token = req.query.code;
+        var _status = req.query.status;
+
         console.log("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code");
 
         request("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code", function(error, resp, json) {
@@ -183,8 +185,8 @@ module.exports = function(server) {
                                 var body = JSON.parse(json);
                                 console.log(body);
                                 common.GetTokenFromOpenID(body).then(function(data) {
-                                    console(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + res.query.status);
-                                    res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + res.query.status);
+                                    console(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _status);
+                                    res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _status);
                                     res.writeHead(200);
                                     res.end();
                                 }, function(err) {

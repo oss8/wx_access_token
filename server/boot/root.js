@@ -191,7 +191,9 @@ module.exports = function(server) {
                                         if (!error && resp.statusCode == 200) {
                                             console.log('send ok')
                                         }
-
+                                        else {
+                                            console.log(error.message);
+                                        }
                                     });                                    
                                 }, function(err) {
                                     res.writeHead(500, {

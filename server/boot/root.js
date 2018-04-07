@@ -42,7 +42,7 @@ module.exports = function(server) {
             wechat_userinfo(req, res, next, config)            
         } else if (req.path == '/wechat_callback') {
 
-            wechat_userinfo(req, res, next, config)               
+            wechat_callback(req, res, next, config)               
         } else if (req.path == '/ticket') {
 
             getTicket(req, res, next, config)

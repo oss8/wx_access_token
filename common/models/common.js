@@ -416,7 +416,7 @@ Common.self_getToken = function(token, appId) {
             } else { //没获取到值--从微信服务器端获取,并往下传递  
                 console.log('redis中无值');
                 wechatApi.updateAccessToken(appId).then(function(data) {
-                    if (result == 'OK' && _.isUndefined(data.errcode)) {
+                    if ( _.isUndefined(data.errcode)) {
                         utils.set(token, `${data.access_token}`, 7180).then(function(result) {
                             //res.send(data);
                             console.log(data);

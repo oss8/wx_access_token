@@ -177,7 +177,7 @@ module.exports = function(server) {
         var str = req.query.bu
 
         //var callback = "http://" + req.headers.host + "/wechat_callback?bu="+str;
-        var callback = "http://w.zlian-tech.com/wechat_callback?"+ querystring.stringify({ appId: appId,bu: str });
+        var callback = "http://w.zlian-tech.com/wechat_callback?"+ querystring.stringify({ appId: appId + "_" + str });
         var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+encodeURI(callback)+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
 
         console.log(encodeURI(callback));

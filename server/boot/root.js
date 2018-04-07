@@ -187,8 +187,6 @@ module.exports = function(server) {
                                 common.GetTokenFromOpenID(body).then(function(data) {
                                     console.log(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state);
                                     res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state);
-                                    res.writeHead(200);
-                                    res.end();
                                 }, function(err) {
                                     res.writeHead(500, {
                                         "errcode": 100003,

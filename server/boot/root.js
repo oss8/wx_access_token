@@ -185,7 +185,7 @@ module.exports = function(server) {
                                 var body = JSON.parse(json);
                                 console.log(body);
                                 common.GetTokenFromOpenID(body).then(function(data) {
-                                    console(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _status);
+                                    console.log(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _status);
                                     res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _status);
                                     res.writeHead(200);
                                     res.end();

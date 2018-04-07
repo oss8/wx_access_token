@@ -186,10 +186,9 @@ module.exports = function(server) {
                                 var body = JSON.parse(json);
                                 //console.log(body);
                                 common.GetTokenFromOpenID(body).then(function(data) {
-                                    //console.log(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state);
 
                                     var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state;
-
+                                    console.log(url);
                                     res.setHeader('Location', url);
                                     res.writeHead(302);
                                     res.end();

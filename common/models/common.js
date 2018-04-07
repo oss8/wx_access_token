@@ -416,22 +416,23 @@ Common.self_getToken = function(token, appId) {
             } else { //没获取到值--从微信服务器端获取,并往下传递  
                 console.log('redis中无值');
                 wechatApi.updateAccessToken(appId).then(function(data) {
-                    utils.set(token, `${data.access_token}`, 7180).then(function(result) {
-                        if (result == 'OK' && _.isUndefined(data.errcode)) {
+                    if (result == 'OK' && _.isUndefined(data.errcode)) {
+                        utils.set(token, `${data.access_token}`, 7180).then(function(result) {
                             //res.send(data);
                             console.log(data);
                             resolve(data);
-                        } else {
-                            //res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });
+                        })
+                    } else {
+                        //res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });
 
-                            reject({
-                                "errcode": 100003,
-                                "errmsg": "redis error"
-                            });
-                            //res.end();
-                        }
-                    })
+                        reject({
+                            "errcode": 100003,
+                            "errmsg": "redis error"
+                        });
+                        //res.end();
+                    }
                 })
+                
             }
         })
     });

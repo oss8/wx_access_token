@@ -224,6 +224,9 @@ module.exports = function(server) {
 
     function wechat_userinfo(req, res, next, config) {
         //根据token从redis中获取access_token 
+
+        console.log(req.query);
+        console.log('------------------------------------')
         var appId = req.query.appId;
         var str = req.query.bu
 

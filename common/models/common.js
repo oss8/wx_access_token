@@ -417,7 +417,7 @@ Common.self_getToken = function(token, appId) {
                 console.log('redis中无值');
                 wechatApi.updateAccessToken(appId).then(function(data) {
                     utils.set(token, `${data.access_token}`, 7180).then(function(result) {
-                        if (result == 'OK') {
+                        if (result == 'OK' && _.isUndefined(data.errcode)) {
                             //res.send(data);
                             console.log(data);
                             resolve(data);

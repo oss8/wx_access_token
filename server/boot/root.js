@@ -163,6 +163,8 @@ module.exports = function(server) {
         var bu = req.query.bu
         var token = req.query.code;
 
+        console.log(req.query);
+
         res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + resp.body.status);
         res.end();
     }

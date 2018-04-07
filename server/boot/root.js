@@ -12,7 +12,7 @@ module.exports = function(server) {
     var configs = require('../../config/config');
     var wechatApi = require('../../common/models/wechatapi')
     var common = require('../../common/models/common')
-
+    var request = require('request');
     router.use(function(req, res, next) {
         var appId = req.query.appId;
         var bu = "";

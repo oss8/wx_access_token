@@ -173,7 +173,7 @@ module.exports = function(server) {
         var str = req.query.bu
 
         var callback = "http://" + req.headers.host + "/wechat_callback?bu="+str;
-        var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri="+callback+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+        var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+callback+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
 
         console.log(callback);
         console.log(url);

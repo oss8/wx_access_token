@@ -175,7 +175,7 @@ module.exports = function(server) {
 
                     common.self_getToken(config.wechat.token, appId).then(function(data) {
                         //common.self_getNickName(res, data.access_token, body.openid)
-
+                        console.log('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN");
                         request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN", function(error, resp, json) {
 
                             if (!error && resp.statusCode == 200) {

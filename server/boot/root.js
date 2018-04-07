@@ -159,6 +159,7 @@ module.exports = function(server) {
         //根据token从redis中获取access_token 
 
         console.log("wechat_callback begin")
+        var appId = req.query.appId;
         var bu = appId.substr(appId.indexOf("_")+1,appId.length);
         var appId = appId.substr(0,appId.indexOf("_"));
         var token = req.query.code;

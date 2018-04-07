@@ -177,7 +177,8 @@ module.exports = function(server) {
 
         console.log(callback);
         console.log(url);
-        res.writeHead(302, url);
+        res.setHeader('Location', url);
+        res.writeHead(302);
         res.end();
     }
     //http://style.man-kang.com:3000/sendtemplate?appId=wx397644d24ec87fd1

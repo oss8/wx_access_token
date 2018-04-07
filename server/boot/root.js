@@ -171,7 +171,32 @@ module.exports = function(server) {
                 var body = JSON.parse(json);
                 console.log(body);
                 if (_.isUndefined(body.errcode)) {
-                    res.send(body);
+                    //res.send(body);
+
+                    common.self_getToken(config.wechat.token, appId).then(function(data) {
+                        //common.self_getNickName(res, data.access_token, body.openid)
+
+                        request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN", function(error, resp, json) {
+
+                            if (!error && resp.statusCode == 200) {
+                                var body = JSON.parse(json);
+                                console.log(body);
+                                if (_.isUndefined(body.errcode)) {
+                                    res.send(body);
+                                } else {
+                                    res.writeHead(403, body);
+                                    res.end(JSON.stringify(body));
+                                }
+                    
+                            } else {
+                                res.send(resp);
+                            }
+                        })                        
+                    }, function(err) {
+                        res.writeHead(500, err);
+                        res.end();
+                    });                    
+
                 } else {
                     res.writeHead(403, body);
                     res.end(JSON.stringify(body));

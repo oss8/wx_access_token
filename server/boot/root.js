@@ -162,7 +162,7 @@ module.exports = function(server) {
         var bu = appId.substr(appId.indexOf("_")+1,appId.length);
         var appId = appId.substr(0,appId.indexOf("_"));
         var token = req.query.code;
-        console.log(req.query);
+        console.log("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code");
 
         request("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code", function(error, resp, json) {
 

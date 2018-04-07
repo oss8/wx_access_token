@@ -52,3 +52,6 @@ Date.prototype.format = function (format) {
     }
     return format;
 }
+
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));

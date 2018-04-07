@@ -15,6 +15,7 @@ module.exports = function(server) {
 
     router.use(function(req, res, next) {
         var appId = req.query.appId;
+        console.log("appId:" + appId);
         if (_.isUndefined(appId)) {
             appId = 'wx397644d24ec87fd1';
         }

@@ -21,12 +21,8 @@ module.exports = function(server) {
             appId = 'wx397644d24ec87fd1';
         }
 
-        if ( req.path == '/wechat_callback'){
-            bu = appId.substr(appId.indexOf("_")+1,appId.length);
+        if ( appId.indexOf("_") > 0 ){
             appId = appId.substr(0,appId.indexOf("_"));
-
-            console.log("appId:" + appId);
-            console.log("bu:" + bu);
         }
 
         var config = _.find(configs, function(item) {
@@ -51,16 +47,10 @@ module.exports = function(server) {
             wechat_userinfo(req, res, next, config)            
         } else if (req.path == '/wechat_callback') {
 
-            wechat_callback(req, res, next, config, bu)               
+            wechat_callback(req, res, next, config)               
         } else if (req.path == '/ticket') {
 
-            getTicket(req, res, next, config)
-        } else if (req.path == '/userConnect') {
-
-            userConnect(req, res, next, config)
-        } else if (req.path == '/getUserInfo') {
-
-            getUserInfo(req, res, next, config)                        
+            getTicket(req, res, next, config)                       
         } else if (req.path == '/qrcode') {
 
             getQRCode(req, res, next, config, 'QR_STR_SCENE')
@@ -165,18 +155,37 @@ module.exports = function(server) {
         });
     };
 
-    function wechat_callback(req, res, next, config, bu) {
+    function wechat_callback(req, res, next, config) {
         //根据token从redis中获取access_token 
 
         console.log("wechat_callback begin")
-        var appId = req.query.appId;
+        var bu = appId.substr(appId.indexOf("_")+1,appId.length);
+        var appId = appId.substr(0,appId.indexOf("_"));
         var token = req.query.code;
-
         console.log(req.query);
 
-        res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + res.body.status);
+        request("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code", function(error, resp, json) {
+
+            if (!error && resp.statusCode == 200) {
+                var body = JSON.parse(json);
+                console.log(body);
+                if (_.isUndefined(body.errcode)) {
+                    res.send(body);
+                } else {
+                    res.writeHead(403, body);
+                    res.end(JSON.stringify(body));
+                }
+    
+            } else {
+                res.send(resp);
+            }            
+        });
+        
+        
+
+        /*res.redirect(bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + res.query.status);
         res.writeHead(200);
-        res.end();
+        res.end();*/
     }
 
     function wechat_userinfo(req, res, next, config) {
@@ -432,34 +441,6 @@ module.exports = function(server) {
 
     }
 
-    //http://style.man-kang.com:3000/userConnect?appId=wx397644d24ec87fd1&bu=http://style.man-kang.com:3000/getUserInfo
-    function userConnect(req, res, next, config) {
-        //根据token从redis中获取access_token  
-        var appId = req.query.appId;
-        request('https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appId + "&redirect_uri=http://style.man-kang.com:3000/getUserInfo&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect", function(error, resp, json) {
-
-            if (!error && resp.statusCode == 200) {
-                var body = JSON.parse(json);
-                console.log(body);
-                if (_.isUndefined(body.errcode)) {
-                    res.send(body);
-                } else {
-                    res.writeHead(403, body);
-                    res.end(JSON.stringify(body));
-                }
-    
-            } else {
-                res.send(resp);
-            }            
-        });
-    }
-
-    function getUserInfo(req, res, next, config) {
-        //根据token从redis中获取access_token  
-        console.log(req.query.code);
-        console.log(req.query.userid);
-        res.end();
-    }    
 
     //http://style.man-kang.com:3000/nickname?appId=wx397644d24ec87fd1&openid=oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU
     function getNickName(req, res, next, config) {

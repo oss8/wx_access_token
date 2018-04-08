@@ -187,42 +187,14 @@ module.exports = function(server) {
                         }, function(err) {
                             res.writeHead(500, err);
                             res.end();
-                        });  
-                        //console.log('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN");
-
-                        /*request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN", function(error, resp, json) {
-
-                            if (!error && resp.statusCode == 200) {
-                                var body = JSON.parse(json);
-                                //console.log(body);
-                                common.GetTokenFromOpenID(body).then(function(data) {
-
-                                    var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state;
-                                    console.log(url);
-                                    res.setHeader('Location', url);
-                                    res.writeHead(302);
-                                    res.end();
-                                   
-                                }, function(err) {
-                                    res.writeHead(500, {
-                                        "errcode": 100003,
-                                        "errmsg": err.message
-                                    });
-                                    res.end(err.message);
-                                });
-
-                    
-                            } else {
-                                res.send(resp);
-                            }
-                        })   */                     
+                        });                
                     }, function(err) {
                         res.writeHead(500, err);
                         res.end();
                     });                    
 
                 } else {
-                    res.writeHead(403, body);
+                    res.writeHead(500, body);
                     res.end(JSON.stringify(body));
                 }
     

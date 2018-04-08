@@ -177,8 +177,8 @@ module.exports = function(server) {
 
                     common.self_getToken(config.wechat.token, appId).then(function(data) {
                         common.self_getNickNameByToken(res, data.access_token, body.openid).then(function(token){
-                            
-                            var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state;
+
+                            var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + _state;
                             console.log(url);
                             res.setHeader('Location', url);
                             res.writeHead(302);

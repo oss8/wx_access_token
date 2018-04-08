@@ -164,7 +164,6 @@ module.exports = function(server) {
         var appId = req.query.appId;
         var bu = appId.substr(appId.indexOf("_")+1,appId.length);
         var appId = appId.substr(0,appId.indexOf("_"));
-        var token = req.query.code;
         var _state = req.query.state;
 
         //console.log("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code");
@@ -175,12 +174,23 @@ module.exports = function(server) {
                 var body = JSON.parse(json);
                 //console.log(body);
                 if (_.isUndefined(body.errcode)) {
-                    //res.send(body);
 
                     common.self_getToken(config.wechat.token, appId).then(function(data) {
-                        //common.self_getNickName(res, data.access_token, body.openid)
+                        common.self_getNickNameByToken(res, data.access_token, body.openid).then(function(token){
+                            
+                            var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: data }) + "&status=" + _state;
+                            console.log(url);
+                            res.setHeader('Location', url);
+                            res.writeHead(302);
+                            res.end();
+
+                        }, function(err) {
+                            res.writeHead(500, err);
+                            res.end();
+                        });  
                         //console.log('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN");
-                        request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN", function(error, resp, json) {
+
+                        /*request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + data.access_token + "&openid=" + body.openid + "&lang=zh_CN", function(error, resp, json) {
 
                             if (!error && resp.statusCode == 200) {
                                 var body = JSON.parse(json);
@@ -205,7 +215,7 @@ module.exports = function(server) {
                             } else {
                                 res.send(resp);
                             }
-                        })                        
+                        })   */                     
                     }, function(err) {
                         res.writeHead(500, err);
                         res.end();
@@ -220,10 +230,6 @@ module.exports = function(server) {
                 res.send(resp);
             }            
         });
-        
-        
-
-
     }
 
     function wechat_userinfo(req, res, next, config) {
@@ -242,6 +248,8 @@ module.exports = function(server) {
         res.writeHead(302);
         res.end();
     }
+
+
     //http://style.man-kang.com:3000/sendtemplate?appId=wx397644d24ec87fd1
     //{
     //     "touser": "oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU",

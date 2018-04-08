@@ -132,44 +132,44 @@ const Alipay = require('alipay2');
 
 //http://0.0.0.0:3000/alipayorders?appId=wxdb5ce1271ea3e6d6&inside_no=20180223-a01fwp9ir&notifyUrl=http://style.man-kang.com:8800/api/weChatEvents/wxnotify&fee=1
 Common.CreateOrders_AliPay = function(res, req, config) {
-        // 目前支付宝秘钥文件，放在config目录下，aliPay的AppID命名的子目录内
-        // 后期大量客户使用时，考虑将文件内容放入DB，但导入时不能直接放入因为有回车符，建议读出内容后，用base64加密后放入，使用时用base64解密
-        // 文件读出后，base64编码
-        // var _base64 = fs.readFileSync(path.join(__dirname, '../../config/',config.wechat.alipay.aliAppID.toString(),'/rsa_private_key.pem')).toString('base64');
-        // // base64解码
-        // var _context = Buffer(_base64, 'base64').toString();
+    // 目前支付宝秘钥文件，放在config目录下，aliPay的AppID命名的子目录内
+    // 后期大量客户使用时，考虑将文件内容放入DB，但导入时不能直接放入因为有回车符，建议读出内容后，用base64加密后放入，使用时用base64解密
+    // 文件读出后，base64编码
+    // var _base64 = fs.readFileSync(path.join(__dirname, '../../config/',config.wechat.alipay.aliAppID.toString(),'/rsa_private_key.pem')).toString('base64');
+    // // base64解码
+    // var _context = Buffer(_base64, 'base64').toString();
 
-        const alipay = new Alipay({
-            notify_url: req.query.notifyUrl,
-            appId: config.wechat.alipay.aliAppID,
-            appKey: fs.readFileSync(path.join(__dirname, '../../config/',config.wechat.alipay.aliAppID.toString(),'/rsa_private_key.pem')),
-            alipayPublicKey: fs.readFileSync(path.join(__dirname, '../../config/',config.wechat.alipay.aliAppID.toString(),'/rsa_public_key.pem')),
-            charset: 'utf-8',
-            sign_type: 'RSA'
-        });
-        console.log(req.query.notifyUrl);
+    const alipay = new Alipay({
+        notify_url: req.query.notifyUrl,
+        appId: config.wechat.alipay.aliAppID,
+        appKey: fs.readFileSync(path.join(__dirname, '../../config/', config.wechat.alipay.aliAppID.toString(), '/rsa_private_key.pem')),
+        alipayPublicKey: fs.readFileSync(path.join(__dirname, '../../config/', config.wechat.alipay.aliAppID.toString(), '/rsa_public_key.pem')),
+        charset: 'utf-8',
+        sign_type: 'RSA'
+    });
+    console.log(req.query.notifyUrl);
 
-        var _out_trade_no = (new Date()).format('yyyyMMdd') + "-alipay" + Math.random().toString(36).substr(2, 9);
+    var _out_trade_no = (new Date()).format('yyyyMMdd') + "-alipay" + Math.random().toString(36).substr(2, 9);
 
-        var _fee = req.query.fee;
+    var _fee = req.query.fee;
 
-        alipay.precreate({
-            subject: config.wechat.alipay.companyName,
-            out_trade_no: _out_trade_no,
-            total_amount: _fee,
-            timeout_express: '10m'
-        }).then(function(result) {
+    alipay.precreate({
+        subject: config.wechat.alipay.companyName,
+        out_trade_no: _out_trade_no,
+        total_amount: _fee,
+        timeout_express: '10m'
+    }).then(function(result) {
 
-            result.out_trade_no = _out_trade_no;
-            result.app_id = config.wechat.alipay.aliAppID;
-            result.in_trade_no = req.query.inside_no;
-            console.log(result);
+        result.out_trade_no = _out_trade_no;
+        result.app_id = config.wechat.alipay.aliAppID;
+        result.in_trade_no = req.query.inside_no;
+        console.log(result);
 
-            res.send(result);
-        }).catch(function(err) {
-            console.log(err);
-            res.send(err);
-        });
+        res.send(result);
+    }).catch(function(err) {
+        console.log(err);
+        res.send(err);
+    });
 
 
 }
@@ -417,16 +417,16 @@ Common.self_getToken = function(token, appId) {
                 console.log('redis中无值');
                 wechatApi.updateAccessToken(appId).then(function(data) {
                     console.log(data);
-                    if ( _.isUndefined(data.errcode)) {
+                    if (_.isUndefined(data.errcode)) {
                         utils.set(token, `${data.access_token}`, 7180).then(function(result) {
 
-                            if ( result == 'OK'){
+                            if (result == 'OK') {
                                 //res.send(data);
                                 console.log(data);
                                 resolve(data);
                             } else {
                                 //res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });
-        
+
                                 reject({
                                     "errcode": 100003,
                                     "errmsg": "redis error"
@@ -445,7 +445,7 @@ Common.self_getToken = function(token, appId) {
                         //res.end();
                     }
                 })
-                
+
             }
         })
     });
@@ -502,6 +502,29 @@ Common.self_getNickName = function(res, access_token, openId) {
         }
     })
 }
+
+Common.self_getNickNameByToken = function(res, access_token, openId) {
+    return new Promise(function(resolve, reject) {
+        request('https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + "&openid=" + openId + "&lang=zh_CN", function(error, resp, json) {
+
+            if (!error && resp.statusCode == 200) {
+                var body = JSON.parse(json);
+                console.log(body);
+                if (_.isUndefined(body.errcode)) {
+                    GetTokenFromOpenID(body).then(function(data) {
+                        resolve(data);
+                    });
+                } else {
+                    reject(body);
+                }
+
+            } else {
+                reject(error);
+            }
+        })
+    });
+}
+
 
 Common.self_getTicket = function(res, access_token, url, appId) {
 

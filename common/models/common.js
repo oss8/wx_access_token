@@ -411,7 +411,6 @@ Common.self_getToken = function(token, appId) {
                 var p = {
                     "access_token": data
                 };
-                //res.send(p);
                 resolve(p);
             } else { //没获取到值--从微信服务器端获取,并往下传递  
                 console.log('redis中无值');
@@ -423,24 +422,18 @@ Common.self_getToken = function(token, appId) {
                             if (result == 'OK') {
                                 resolve(data);
                             } else {
-                                //res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });
-
                                 reject({
                                     "errcode": 100003,
                                     "errmsg": "redis error"
                                 });
-                                //res.end();
                             }
 
                         })
                     } else {
-                        //res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });
-
                         reject({
                             "errcode": 100003,
                             "errmsg": data.errmsg
                         });
-                        //res.end();
                     }
                 })
 

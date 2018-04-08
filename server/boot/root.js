@@ -167,7 +167,6 @@ module.exports = function(server) {
         var _state = req.query.state;
 
         //console.log("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code");
-
         request("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+config.wechat.appSecret+"&code="+req.query.code+"&grant_type=authorization_code", function(error, resp, json) {
 
             if (!error && resp.statusCode == 200) {

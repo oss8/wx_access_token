@@ -421,8 +421,6 @@ Common.self_getToken = function(token, appId) {
                         utils.set(token, `${data.access_token}`, 7180).then(function(result) {
 
                             if (result == 'OK') {
-                                //res.send(data);
-                                console.log(data);
                                 resolve(data);
                             } else {
                                 //res.writeHead(500, { "errcode": 100003, "errmsg": "redis error" });

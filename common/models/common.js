@@ -511,7 +511,7 @@ Common.self_getNickNameByToken = function(res, access_token, openId) {
                 var body = JSON.parse(json);
                 console.log(body);
                 if (_.isUndefined(body.errcode)) {
-                    GetTokenFromOpenID(body).then(function(data) {
+                    Common.GetTokenFromOpenID(body).then(function(data) {
                         resolve(data);
                     });
                 } else {

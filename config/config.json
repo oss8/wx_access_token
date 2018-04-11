@@ -12,5 +12,13 @@
                 "companyName":"知联科技"
             }
         }
-    } 
+    },
+    {
+        "wechat": {
+            "appID": "wx537743a9f2c3dc99",
+            "appSecret": "92276c91e60b5f0b6b2227408d649daa",
+            "prefix": "https://api.weixin.qq.com/cgi-bin/",
+            "token": "zhilian-tech-minproject"
+        }
+    }    
 ]

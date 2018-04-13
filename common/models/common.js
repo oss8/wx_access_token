@@ -192,13 +192,21 @@ Common.CreateOrders = function(res, req, config) {
 
     var _out_trade_no = (new Date()).format('yyyyMMdd') + "-wxpay" + Math.random().toString(36).substr(2, 9);
 
+    var _openid = '';
+    var payType = 'NATIVE';
+    if ( !_.isUndefined(req.query.openid)){
+        _openid = req.query.openid;
+        payType = 'JSAPI'
+    }
+
     wxpay.createUnifiedOrder({
+        openid: req.query.openid,
         body: '支付',
         out_trade_no: _out_trade_no,
         total_fee: fee,
         spbill_create_ip: getIPAdress(),
         notify_url: notifyurl,
-        trade_type: 'NATIVE',
+        trade_type: payType,
         product_id: '1234567890'
     }, function(err, result) {
         result.out_trade_no = _out_trade_no;

@@ -188,8 +188,6 @@ Common.CreateOrders = function(res, req, config) {
         pfx: '' //微信商户平台证书
     });
 
-    console.log(wxpay);
-
     var _out_trade_no = (new Date()).format('yyyyMMdd') + "-wxpay" + Math.random().toString(36).substr(2, 9);
 
     var _openid = '';
@@ -199,6 +197,8 @@ Common.CreateOrders = function(res, req, config) {
         payType = 'JSAPI'
     }
 
+    console.log("payType:" + payType);
+    
     wxpay.createUnifiedOrder({
         openid: req.query.openid,
         body: '支付',

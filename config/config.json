@@ -5,15 +5,27 @@
             "appSecret": "3aa9142665bfc96c27cc7c22ee81ecde",
             "paySecret": "3aa9142665bfc96c27cc7c22ee81ecde",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
+            "threeToken": "",
             "token": "zhilian-tech",
             "mch_id": 1501531441,
             "wechat_callback":"http://w.zlian-tech.com/wechat_callback?",
             "alipay":{
                 "aliAppID":2017082308338778,
-                "companyName":"知联科技"
+                "companyName":""
             }
         }
     },
+    {
+        "wechat": {
+            "appID": "wx012a9130903a7396",
+            "appSecret": "CB21E40BB6603CE9338BAFC0DB6EF68B",
+            "paySecret": "CB21E40BB6603CE9338BAFC0DB6EF68B",
+            "prefix": "https://api.weixin.qq.com/cgi-bin/",
+            "threeToken": "http://prolineapi.eshine.cn:3000/inf/getWechatToken",
+            "token": "yixiang-tech",
+            "mch_id": 1459195002
+        }
+    },    
     {
         "wechat": {
             "appID": "wx537743a9f2c3dc99",

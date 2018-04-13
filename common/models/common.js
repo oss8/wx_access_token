@@ -192,13 +192,13 @@ Common.CreateOrders = function(res, req, config) {
 
     var _openid = '';
     var payType = 'NATIVE';
-    if ( !_.isUndefined(req.query.openid)){
+    if (!_.isUndefined(req.query.openid)) {
         _openid = req.query.openid;
         payType = 'JSAPI'
     }
 
     console.log("payType:" + payType);
-    
+
     wxpay.createUnifiedOrder({
         openid: req.query.openid,
         body: '支付',
@@ -412,8 +412,34 @@ Common.GetOpenIDFromToken = function(token) {
     }
 }
 
+var configs = require('../../config/config');
+
 Common.self_getToken = function(token, appId) {
     return new Promise(function(resolve, reject) {
+
+        var config = _.find(configs, function(item) {
+            return item.wechat.appID == appId;
+        })
+
+        // 设置第三方Token获取url，自动从第三方源获取access_token后返回
+        if (!_.isUndefined(config.wechat.threeToken) && config.wechat.threeToken.length > 0 ) {
+
+            request(encodeURI(config.wechat.threeToken),
+                function(error, resp, json) {
+
+                    if (!error && resp.statusCode == 200) {
+                        var body = JSON.parse(json);
+                        resolve(body.access_token);
+                    } else {
+                        reject({
+                            "errcode": 100003,
+                            "errmsg": err.message
+                        });
+                    }
+                });
+            return;
+        }
+
         utils.get(token).then(function(data) {
 
             if (data) { //获取到值--往下传递  

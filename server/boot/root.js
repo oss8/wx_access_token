@@ -220,32 +220,6 @@ module.exports = function(server) {
         res.end();
     }
 
-
-    //http://style.man-kang.com:3000/sendtemplate?appId=wx397644d24ec87fd1
-    //{
-    //     "touser": "oFVZ-1Mf3yxWLWHQPE_3BhlVFnGU",
-    //     "template_id": "B_uOplB1dlCWSZqYxgHR5dXH3D7v3WFhtttRH16DTp0",
-    //     "data": {
-    //         "first": {
-    //             "value": "手环测量结果推送"
-    //         },
-    //         "keyword1": {
-    //             "value": "geling"
-    //         },
-    //         "keyword2": {
-    //             "value": "test"
-    //         },
-    //         "keyword3": {
-    //             "value": "曼康云"
-    //         },
-    //         "keyword4": {
-    //             "value": 124
-    //         },
-    //         "remark": {
-    //             "value": "曼康云-祝你健康每一天"
-    //         }
-    //     }
-    // }
     function sendTemplate(req, res, next, config) {
         //根据token从redis中获取access_token 
         var appId = req.query.appId;
@@ -364,34 +338,6 @@ module.exports = function(server) {
                 });
                 res.end(error.message);
             }
-        });
-    }
-
-    function Authentication(req, res, next) {
-
-        parsePostBody(req, (chunks) => {
-            var body = JSON.parse(chunks.toString());
-            var data = common.GetOpenIDFromToken(body.vgdecoderesult);
-
-            console.log(data);
-            var openList = [];
-            openList.push('https://u.wechat.com/ECQyBQ05Gt9zAJ6bEn42gzI');
-            openList.push('https://u.wechat.com/EE-4qLrqzioUWCVyOuo3Ut0');
-            openList.push('https://u.wechat.com/EJNCZJLvGQZfpz8Gdvokm6k');
-            openList.push('oFVZ-1M21POeEOX2gejWRkDE-EWw');
-
-            var find = _.find(openList, function(fitem) {
-                return fitem == data.openid;
-            })
-
-            if (!_.isUndefined(find)) {
-                //EWTRACE('send ok');
-                res.send("code=0000&&desc=ok");
-            } else {
-                //EWTRACE('send bad');
-                res.send("code=0001&&desc=bad");
-            }
-            res.end();
         });
     }
 

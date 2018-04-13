@@ -177,7 +177,7 @@ Common.CreateOrders_AliPay = function(res, req, config) {
 
 // 支付返回签名错误时，检查微信商户平台-》账户中心-》API安全-》API秘钥要设置，缺省设置为appSecret，
 Common.CreateOrders = function(res, req, config) {
-    //http://0.0.0.0:3000/createorders?appId=wxdb5ce1271ea3e6d6&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify&fee=1&inside_no=123232423&openid=xxxxxxxxxxxx
+    //http://0.0.0.0:3000/createorders?appId=wxdb5ce1271ea3e6d6&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify&inside_no=123232423&openid=xxxxxxxxxxxx
     var fee = req.query.fee;
     var notifyurl = req.query.notifyUrl;
 

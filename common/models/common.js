@@ -562,6 +562,7 @@ Common.self_getTicket = function(res, access_token, url, appId) {
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
 
+    url = decodeURI(url);
     request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function(error, resp, json) {
         if (!error && resp.statusCode == 200) {
             var ticketMap = JSON.parse(json);

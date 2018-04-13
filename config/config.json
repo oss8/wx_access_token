@@ -3,6 +3,7 @@
         "wechat": {
             "appID": "wx13eaa53cf5121bce",
             "appSecret": "3aa9142665bfc96c27cc7c22ee81ecde",
+            "paySecret": "3aa9142665bfc96c27cc7c22ee81ecde",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "token": "zhilian-tech",
             "mch_id": 1501531441,

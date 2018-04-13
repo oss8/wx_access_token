@@ -175,7 +175,7 @@ Common.CreateOrders_AliPay = function(res, req, config) {
 }
 
 
-// 支付返回签名错误时，检查微信商户平台-》账户中心-》API安全-》API秘钥要设置，缺省设置为appSecret，后期如果要改appSecret，必须同步修改
+// 支付返回签名错误时，检查微信商户平台-》账户中心-》API安全-》API秘钥要设置，缺省设置为appSecret，
 Common.CreateOrders = function(res, req, config) {
     //http://0.0.0.0:3000/createorders?appId=wxdb5ce1271ea3e6d6&fee=1&notifyUrl=http://gl.eshine.cn/wechatnotify&inside_no=123232423
     var fee = req.query.fee;
@@ -184,7 +184,7 @@ Common.CreateOrders = function(res, req, config) {
     var wxpay = WXPay({
         appid: config.wechat.appID,
         mch_id: config.wechat.mch_id,
-        partner_key: config.wechat.appSecret, //微信商户平台API密钥
+        partner_key: config.wechat.paySecret, //微信商户平台API密钥
         pfx: '' //微信商户平台证书
     });
 

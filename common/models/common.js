@@ -247,7 +247,7 @@ Common.CreateOrders = function(res, req, config) {
             notify_url: notifyurl
            }, function(err, result){
             // in express
-               res.render('wxpay/jsapi', { payargs:result })
+            res.send(result);
            });        
     }
 

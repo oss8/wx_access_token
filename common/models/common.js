@@ -198,44 +198,59 @@ Common.CreateOrders = function(res, req, config) {
     }
 
     console.log("payType:" + payType);
-
-    wxpay.createUnifiedOrder({
-        openid: req.query.openid,
-        body: '支付',
-        out_trade_no: _out_trade_no,
-        total_fee: fee,
-        spbill_create_ip: getIPAdress(),
-        notify_url: notifyurl,
-        trade_type: payType,
-        product_id: '1234567890'
-    }, function(err, result) {
-        result.out_trade_no = _out_trade_no;
-        result.inside_no = req.query.inside_no;
-
-        var nonce_str = createNonceStr();
-        var timeStamp = createTimeStamp();
-        var prepay_id = result.prepay_id;
-
-        //生成移动端app调用签名  
-        var _paySignjs = paysignjs(config.wechat.appID, nonce_str, 'Sign=WXPay', config.wechat.mch_id, timeStamp, prepay_id, config.wechat.partner_key);
-        var args = {
-            appId: config.wechat.appID,
-            timeStamp: timeStamp,
-            nonceStr: nonce_str,
-            signType: "MD5",
-            mch_id: config.wechat.mch_id,
-            prepay_id: prepay_id,
-            paySign: _paySignjs,
+    if ( payType == 'NATIVE'){
+        wxpay.createUnifiedOrder({
+            body: '支付',
             out_trade_no: _out_trade_no,
-            in_trade_no: req.query.inside_no,
-            code_url: result.code_url //微信支付生成二维码，在此处返回
-        };
+            total_fee: fee,
+            spbill_create_ip: getIPAdress(),
+            notify_url: notifyurl,
+            trade_type: payType,
+            product_id: '1234567890'
+        }, function(err, result) {
+            result.out_trade_no = _out_trade_no;
+            result.inside_no = req.query.inside_no;
+    
+            var nonce_str = createNonceStr();
+            var timeStamp = createTimeStamp();
+            var prepay_id = result.prepay_id;
+    
+            //生成移动端app调用签名  
+            var _paySignjs = paysignjs(config.wechat.appID, nonce_str, 'Sign=WXPay', config.wechat.mch_id, timeStamp, prepay_id, config.wechat.partner_key);
+            var args = {
+                appId: config.wechat.appID,
+                timeStamp: timeStamp,
+                nonceStr: nonce_str,
+                signType: "MD5",
+                mch_id: config.wechat.mch_id,
+                prepay_id: prepay_id,
+                paySign: _paySignjs,
+                out_trade_no: _out_trade_no,
+                in_trade_no: req.query.inside_no,
+                code_url: result.code_url //微信支付生成二维码，在此处返回
+            };
+    
+            result.threePay = args;
+    
+            console.log(result);
+            res.send(result);
+        });
+    }else{
+        wxpay.getBrandWCPayRequestParams({
+            openid: OpenID.openid,
+            body: '支付',
+            detail: '公众号支付',
+            out_trade_no: _out_trade_no,
+            total_fee: fee,
+            spbill_create_ip: getIPAdress(),
+            notify_url: notifyurl
+           }, function(err, result){
+            // in express
+               res.render('wxpay/jsapi', { payargs:result })
+           });        
+    }
 
-        result.threePay = args;
 
-        console.log(result);
-        res.send(result);
-    });
 }
 
 Common.QueryOrders = function(res, req, config) {

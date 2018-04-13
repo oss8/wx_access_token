@@ -181,7 +181,6 @@ Common.CreateOrders = function(res, req, config) {
     var fee = req.query.fee;
     var notifyurl = req.query.notifyUrl;
 
-    fee = 1;
     var wxpay = WXPay({
         appid: config.wechat.appID,
         mch_id: config.wechat.mch_id,

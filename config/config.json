@@ -5,7 +5,7 @@
             "appSecret": "99fb2142a2582deea903866885964b91",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "token": "zhilian-tech",
-            "mch_id": "1501531441",
+            "mch_id": 1501531441,
             "wechat_callback":"http://w.zlian-tech.com/wechat_callback?",
             "alipay":{
                 "aliAppID":2017082308338778,

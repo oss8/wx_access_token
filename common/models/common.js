@@ -585,8 +585,9 @@ Common.self_getTicket = function(res, access_token, url, appId) {
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
     if (utils.get('ticket1-'+appId)) {
-        console.log('ticket 有值， 名称：'+'ticket-'+appId)
-        var jsapi_ticket = utils.get('ticket-'+appId);
+        console.log('ticket 有值， 名称：'+'ticket1-'+appId)
+        var jsapi_ticket = utils.get('ticket1-'+appId);
+        console.log(jsapi_ticket);
         console.log('jsapi_ticket=' + jsapi_ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
         var resp = {
             noncestr: winxinconfig.noncestr,

@@ -238,7 +238,7 @@ Common.CreateOrders = function(res, req, config) {
     } else {
         console.log('JSAPI paymode')
         wxpay.getBrandWCPayRequestParams({
-            openid: req.query.openid,
+            
             body: '支付',
             detail: '公众号支付',
             out_trade_no: _out_trade_no,

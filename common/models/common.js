@@ -584,41 +584,49 @@ Common.self_getTicket = function(res, access_token, url, appId) {
         ticketUrl: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
-    if (utils.get('ticket1-'+appId)) {
-        console.log('ticket 有值， 名称：'+'ticket1-'+appId)
-        var jsapi_ticket = utils.get('ticket1-'+appId);
-        console.log(jsapi_ticket);
-        console.log('jsapi_ticket=' + jsapi_ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
-        var resp = {
-            noncestr: winxinconfig.noncestr,
-            timestamp: winxinconfig.timestamp,
-            url: url,
-            appid: appId,
-            signature: sha1('jsapi_ticket=' + jsapi_ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
-        };
-        res.send(resp);
-    } else {
-        url = decodeURI(url);
-        request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function(error, resp, json) {
-            if (!error && resp.statusCode == 200) {
-                
-                var ticketMap = JSON.parse(json);
-                utils.set('ticket1-'+appId, ticketMap.ticket);
-                console.log('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
-                var Data = {
-                    noncestr: winxinconfig.noncestr,
-                    timestamp: winxinconfig.timestamp,
-                    url: url,
-                    appid: appId,
-                    signature: sha1('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
-                };
 
-                res.send(Data);
-            } else {
-                res.send(resp);
-            }
-        })
-    }
+    var redis_name = 'ticket2-' + appId;
+    utils.get(redis_name).then(function(data) {
+        if (data) {
+            console.log('ticket 有值， 名称：' + redis_name)
+            //var jsapi_ticket = utils.get('ticket1-' + appId);
+            console.log(data);
+            console.log('jsapi_ticket=' + data + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
+            var resp = {
+                noncestr: winxinconfig.noncestr,
+                timestamp: winxinconfig.timestamp,
+                url: url,
+                appid: appId,
+                signature: sha1('jsapi_ticket=' + data + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
+            };
+            res.send(resp);
+        } else {
+            url = decodeURI(url);
+            request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function(error, resp, json) {
+                if (!error && resp.statusCode == 200) {
+
+                    var ticketMap = JSON.parse(json);
+                    utils.set(redis_name, ticketMap.ticket, 7180).then(function(result) {
+
+                        if (result == 'OK') {
+                            console.log('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
+                            var Data = {
+                                noncestr: winxinconfig.noncestr,
+                                timestamp: winxinconfig.timestamp,
+                                url: url,
+                                appid: appId,
+                                signature: sha1('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
+                            };
+
+                            res.send(Data);
+                        } else {
+                            res.send(resp);
+                        }
+                    });
+                }
+            })
+        }
+    });
 }
 
 Common.self_getQRCode = function(res, access_token, strQR, type) {

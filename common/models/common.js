@@ -595,7 +595,7 @@ Common.self_getTicket = function(res, access_token, url, appId) {
             appid: appId,
             signature: sha1('jsapi_ticket=' + jsapi_ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
         };
-        res.send(Data);
+        res.send(resp);
     } else {
         url = decodeURI(url);
         request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function(error, resp, json) {

@@ -584,7 +584,7 @@ Common.self_getTicket = function(res, access_token, url, appId) {
         ticketUrl: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
-    if (utils.get('ticket-'+appId)) {
+    if (utils.get('ticket1-'+appId)) {
         console.log('ticket 有值， 名称：'+'ticket-'+appId)
         var jsapi_ticket = utils.get('ticket-'+appId);
         console.log('jsapi_ticket=' + jsapi_ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
@@ -602,7 +602,7 @@ Common.self_getTicket = function(res, access_token, url, appId) {
             if (!error && resp.statusCode == 200) {
                 
                 var ticketMap = JSON.parse(json);
-                utils.set('ticket-'+appId, ticketMap.ticket);
+                utils.set('ticket1-'+appId, ticketMap.ticket);
                 console.log('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
                 var Data = {
                     noncestr: winxinconfig.noncestr,

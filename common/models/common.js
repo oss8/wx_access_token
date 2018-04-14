@@ -584,25 +584,39 @@ Common.self_getTicket = function(res, access_token, url, appId) {
         ticketUrl: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
         timestamp: Math.floor(Date.now() / 1000) //精确到秒
     }
+    if (utils.get('ticket-'+appId)) {
+        var jsapi_ticket = utils.get('ticket-'+appId);
+        console.log('jsapi_ticket=' + jsapi_ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
+        var resp = {
+            noncestr: winxinconfig.noncestr,
+            timestamp: winxinconfig.timestamp,
+            url: url,
+            appid: appId,
+            signature: sha1('jsapi_ticket=' + jsapi_ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
+        };
+        res.send(Data);
+    } else {
+        url = decodeURI(url);
+        request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function(error, resp, json) {
+            if (!error && resp.statusCode == 200) {
+                
+                var ticketMap = JSON.parse(json);
+                utils.set('ticket-'+appId, ticketMap.ticket);
+                console.log('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
+                var Data = {
+                    noncestr: winxinconfig.noncestr,
+                    timestamp: winxinconfig.timestamp,
+                    url: url,
+                    appid: appId,
+                    signature: sha1('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
+                };
 
-    url = decodeURI(url);
-    request(winxinconfig.ticketUrl + '?access_token=' + access_token + '&type=jsapi', function(error, resp, json) {
-        if (!error && resp.statusCode == 200) {
-            var ticketMap = JSON.parse(json);
-            console.log('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url);
-            var Data = {
-                noncestr: winxinconfig.noncestr,
-                timestamp: winxinconfig.timestamp,
-                url: url,
-                appid: appId,
-                signature: sha1('jsapi_ticket=' + ticketMap.ticket + '&noncestr=' + winxinconfig.noncestr + '&timestamp=' + winxinconfig.timestamp + '&url=' + url)
-            };
-
-            res.send(Data);
-        } else {
-            res.send(resp);
-        }
-    })
+                res.send(Data);
+            } else {
+                res.send(resp);
+            }
+        })
+    }
 }
 
 Common.self_getQRCode = function(res, access_token, strQR, type) {

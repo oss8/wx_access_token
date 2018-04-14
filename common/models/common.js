@@ -247,8 +247,11 @@ Common.CreateOrders = function(res, req, config) {
             notify_url: notifyurl
         }, function(err, result) {
             // in express
-            res.send(result);
-
+            if ( !_.isNull(err)){
+                res.send(err)
+            }else{
+                res.send(result);
+            }
         });
     }
 

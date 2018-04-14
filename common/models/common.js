@@ -198,7 +198,7 @@ Common.CreateOrders = function(res, req, config) {
     }
 
     console.log("payType:" + payType);
-    if ( payType == 'NATIVE'){
+    if (payType == 'NATIVE') {
         wxpay.createUnifiedOrder({
             body: '支付',
             out_trade_no: _out_trade_no,
@@ -210,11 +210,11 @@ Common.CreateOrders = function(res, req, config) {
         }, function(err, result) {
             result.out_trade_no = _out_trade_no;
             result.inside_no = req.query.inside_no;
-    
+
             var nonce_str = createNonceStr();
             var timeStamp = createTimeStamp();
             var prepay_id = result.prepay_id;
-    
+
             //生成移动端app调用签名  
             var _paySignjs = paysignjs(config.wechat.appID, nonce_str, 'Sign=WXPay', config.wechat.mch_id, timeStamp, prepay_id, config.wechat.partner_key);
             var args = {
@@ -229,13 +229,13 @@ Common.CreateOrders = function(res, req, config) {
                 in_trade_no: req.query.inside_no,
                 code_url: result.code_url //微信支付生成二维码，在此处返回
             };
-    
+
             result.threePay = args;
-    
+
             console.log(result);
             res.send(result);
         });
-    }else{
+    } else {
         console.log('JSAPI paymode')
         wxpay.getBrandWCPayRequestParams({
             openid: req.query.openid,
@@ -245,16 +245,17 @@ Common.CreateOrders = function(res, req, config) {
             total_fee: fee,
             spbill_create_ip: getIPAdress(),
             notify_url: notifyurl
-           }, function(err, result){
+        }, function(err, result) {
             // in express
-            if ( !err ){
+            if (!err) {
+                console.log(err);
                 res.send(err);
-            }else{
+            } else {
                 console.log(result);
                 res.send(result);
             }
 
-           });        
+        });
     }
 
 
@@ -444,7 +445,7 @@ Common.self_getToken = function(token, appId) {
         })
 
         // 设置第三方Token获取url，自动从第三方源获取access_token后返回
-        if (!_.isUndefined(config.wechat.threeToken) && config.wechat.threeToken.length > 0 ) {
+        if (!_.isUndefined(config.wechat.threeToken) && config.wechat.threeToken.length > 0) {
 
             request(encodeURI(config.wechat.threeToken),
                 function(error, resp, json) {

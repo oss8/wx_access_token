@@ -208,32 +208,37 @@ Common.CreateOrders = function(res, req, config) {
             trade_type: payType,
             product_id: '1234567890'
         }, function(err, result) {
-            result.out_trade_no = _out_trade_no;
-            result.inside_no = req.query.inside_no;
 
-            var nonce_str = createNonceStr();
-            var timeStamp = createTimeStamp();
-            var prepay_id = result.prepay_id;
+            if (!_.isNull(err)) {
+                result.out_trade_no = _out_trade_no;
+                result.inside_no = req.query.inside_no;
 
-            //生成移动端app调用签名  
-            var _paySignjs = paysignjs(config.wechat.appID, nonce_str, 'Sign=WXPay', config.wechat.mch_id, timeStamp, prepay_id, config.wechat.partner_key);
-            var args = {
-                appId: config.wechat.appID,
-                timeStamp: timeStamp,
-                nonceStr: nonce_str,
-                signType: "MD5",
-                mch_id: config.wechat.mch_id,
-                prepay_id: prepay_id,
-                paySign: _paySignjs,
-                out_trade_no: _out_trade_no,
-                in_trade_no: req.query.inside_no,
-                code_url: result.code_url //微信支付生成二维码，在此处返回
-            };
+                var nonce_str = createNonceStr();
+                var timeStamp = createTimeStamp();
+                var prepay_id = result.prepay_id;
 
-            result.threePay = args;
+                //生成移动端app调用签名  
+                var _paySignjs = paysignjs(config.wechat.appID, nonce_str, 'Sign=WXPay', config.wechat.mch_id, timeStamp, prepay_id, config.wechat.partner_key);
+                var args = {
+                    appId: config.wechat.appID,
+                    timeStamp: timeStamp,
+                    nonceStr: nonce_str,
+                    signType: "MD5",
+                    mch_id: config.wechat.mch_id,
+                    prepay_id: prepay_id,
+                    paySign: _paySignjs,
+                    out_trade_no: _out_trade_no,
+                    in_trade_no: req.query.inside_no,
+                    code_url: result.code_url //微信支付生成二维码，在此处返回
+                };
 
-            console.log(result);
-            res.send(result);
+                result.threePay = args;
+
+                console.log(result);
+                res.send(result);
+            } else {
+                res.send(err);
+            }
         });
     } else {
         console.log('JSAPI paymode')
@@ -247,9 +252,9 @@ Common.CreateOrders = function(res, req, config) {
             notify_url: notifyurl
         }, function(err, result) {
             // in express
-            if ( !_.isNull(err)){
+            if (!_.isNull(err)) {
                 res.send(err)
-            }else{
+            } else {
                 res.send(result);
             }
 

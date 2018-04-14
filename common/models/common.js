@@ -248,10 +248,10 @@ Common.CreateOrders = function(res, req, config) {
         }, function(err, result) {
             // in express
             if (!err) {
-                console.log(err);
+                console.log('err'+err);
                 res.send(err);
             } else {
-                console.log(result);
+                console.log('result:'+result);
                 res.send(result);
             }
 

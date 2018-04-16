@@ -38,7 +38,7 @@
     "public": false
   },
   "common": {
-    "dataSource": "main_DBConnect",
+    "dataSource": "db",
     "public": true
   }
 }

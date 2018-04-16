@@ -468,7 +468,6 @@ Common.self_getToken = function(token, appId) {
             if (data) { //获取到值--往下传递  
                 console.log('redis获取到值');
                 request('https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=' + data , function(error, resp, json) {
-                    console.log(json);
                     var body = JSON.parse(json);
                     if (_.isUndefined(body.errcode) ){
                         var p = {

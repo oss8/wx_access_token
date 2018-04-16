@@ -116,11 +116,7 @@ module.exports = function(server) {
             console.log(data);
             res.send(data);
         }, function(err) {
-            res.writeHead(500, {
-                "errcode": 100003,
-                "errmsg": err.message
-            });
-            res.end(err.message);
+            res.send(err);
         });
     }
 
@@ -133,11 +129,7 @@ module.exports = function(server) {
             console.log(data);
             res.send(data);
         }, function(err) {
-            res.writeHead(500, {
-                "errcode": 100003,
-                "errmsg": err.message
-            });
-            res.end(err.message);
+            res.send(err);
         });
     }
 
@@ -184,17 +176,14 @@ module.exports = function(server) {
                             res.end();
 
                         }, function(err) {
-                            res.writeHead(500, err);
-                            res.end();
+                            res.send(err);
                         });                
-                    }, function(err) {
-                        res.writeHead(500, err);
-                        res.end();
-                    });                    
+                    },function(err){
+                        res.send(err);
+                    });                  
 
                 } else {
-                    res.writeHead(500, body);
-                    res.end(JSON.stringify(body));
+                    res.send(body);
                 }
     
             } else {
@@ -233,12 +222,10 @@ module.exports = function(server) {
                     console.log(data);
                     res.send(data);
                 }, function(err) {
-                    res.writeHead(500, {
-                        "errcode": 100003,
-                        "errmsg": err.message
-                    });
-                    res.end(err.message);
+                    res.send(err);
                 });
+            },function(err){
+                res.send(err);
             });
         });
     }
@@ -255,12 +242,10 @@ module.exports = function(server) {
                     console.log(data);
                     res.send(data);
                 }, function(err) {
-                    res.writeHead(500, {
-                        "errcode": 100003,
-                        "errmsg": err.message
-                    });
-                    res.end(err.message);
+                    res.send(err);
                 });
+            },function(err){
+                res.send(err);
             });
         });
     }
@@ -275,12 +260,8 @@ module.exports = function(server) {
             common.requestMediaList(token.access_token, offset, count).then(function(data) {
                 console.log(data);
                 res.send(data);
-            }, function(err) {
-                res.writeHead(500, {
-                    "errcode": 100003,
-                    "errmsg": err.message
-                });
-                res.end(err.message);
+            },function(err){
+                res.send(err);
             });
         });
 
@@ -294,11 +275,7 @@ module.exports = function(server) {
             common.GetTokenFromOpenID(body).then(function(data) {
                 res.send(data);
             }, function(err) {
-                res.writeHead(500, {
-                    "errcode": 100003,
-                    "errmsg": err.message
-                });
-                res.end(err.message);
+                res.send(err);
             });
         });
     }
@@ -323,20 +300,15 @@ module.exports = function(server) {
                         "result": resdata
                     });
                 }, function(err) {
-                    res.writeHead(500, {
-                        "errcode": 100003,
-                        "errmsg": err.message
-                    });
-                    res.end(err.message);
+                    res.send(err);
                 });
 
             } catch (error) {
                 console.log(error.message);
-                res.writeHead(500, {
+                res.send({
                     "errcode": 100003,
                     "errmsg": error.message
                 });
-                res.end(error.message);
             }
         });
     }
@@ -347,11 +319,10 @@ module.exports = function(server) {
         var token = req.query.token;
         if (_.isUndefined(token)) {
             console.log("403, token is Empty");
-            res.writeHead(403, {
+            res.send({
                 "errcode": 100002,
                 "errmsg": "token is Empty"
             });
-            res.end("token is Empty");
             return;
         }
 
@@ -360,11 +331,10 @@ module.exports = function(server) {
             res.send(data);
 
         } catch (err) {
-            res.writeHead(500, {
+            res.send({
                 "errcode": 100003,
                 "errmsg": err.message
             });
-            res.end(err.message);
         };
 
     }
@@ -378,17 +348,16 @@ module.exports = function(server) {
 
         if (_.isUndefined(openid)) {
             console.log("403, openid is Empty");
-            res.writeHead(403, {
+            res.send({
                 "errcode": 100002,
                 "errmsg": "openid is Empty"
             });
-            res.end("openid is Empty");
             return;
         }
 
         if (_.isUndefined(context)) {
             console.log("403, context is Empty");
-            res.writeHead(403, {
+            res.send({
                 "errcode": 100002,
                 "errmsg": "context is Empty"
             });
@@ -398,9 +367,8 @@ module.exports = function(server) {
 
         common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_sendNotify(res, data.access_token, openid, context)
-        }, function(err) {
-            res.writeHead(500, err);
-            res.end();
+        },function(err){
+            res.send(err);
         });
 
     }
@@ -413,18 +381,16 @@ module.exports = function(server) {
         var openid = req.query.openid;
         if (_.isUndefined(openid)) {
             console.log("403, openid is Empty");
-            res.writeHead(403, {
+            res.send({
                 "errcode": 100002,
                 "errmsg": "openid is Empty"
             });
-            res.end("openid is Empty");
             return;
         }
         common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_getNickName(res, data.access_token, openid)
-        }, function(err) {
-            res.writeHead(500, err);
-            res.end();
+        },function(err){
+            res.send(err);
         });
 
     }
@@ -436,18 +402,16 @@ module.exports = function(server) {
         var QRCode = req.query.QRCode;
         if (_.isUndefined(QRCode)) {
             console.log("403, QRCode is Empty");
-            res.writeHead(403, {
+            res.send({
                 "errcode": 100002,
                 "errmsg": "QRCode is Empty"
             });
-            res.end("QRCode is Empty");
             return;
         }
         common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_getQRCode(res, data.access_token, QRCode, type)
-        }, function(err) {
-            res.writeHead(500, err);
-            res.end();
+        },function(err){
+            res.send(err);
         });
 
     }
@@ -458,19 +422,17 @@ module.exports = function(server) {
         var url = req.query.url;
         if (_.isUndefined(url)) {
             console.log("403, url is Empty");
-            res.writeHead(403, {
+            res.send({
                 "errcode": 100002,
                 "errmsg": "url is Empty"
             });
-            res.end("url is Empty");
             return;
         }
 
         common.self_getToken(config.wechat.token, appId).then(function(data) {
             common.self_getTicket(res, data.access_token, url, appId)
-        }, function(err) {
-            res.writeHead(500, err);
-            res.end();
+        },function(err){
+            res.send(err);
         });
     }
 
@@ -481,9 +443,8 @@ module.exports = function(server) {
 
         common.self_getToken(config.wechat.token, appId).then(function(data) {
             res.send(data);
-        }, function(err) {
-            res.writeHead(500, err);
-            res.end();
+        },function(err){
+            res.send(err);
         });
 
     }

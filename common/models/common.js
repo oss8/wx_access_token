@@ -457,10 +457,7 @@ Common.self_getToken = function(token, appId) {
                         var body = JSON.parse(json);
                         resolve(body.access_token);
                     } else {
-                        reject({
-                            "errcode": 100003,
-                            "errmsg": err.message
-                        });
+                        reject(error);
                     }
                 });
             return;
@@ -470,10 +467,37 @@ Common.self_getToken = function(token, appId) {
 
             if (data) { //获取到值--往下传递  
                 console.log('redis获取到值');
-                var p = {
-                    "access_token": data
-                };
-                resolve(p);
+                request('https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=' + data , function(error, resp, json) {
+                    console.log(json);
+                    var body = JSON.parse(json);
+                    if (_.isUndefined(body.errcode) ){
+                        var p = {
+                            "access_token": data
+                        };
+                        resolve(p);            
+                    } else {
+                        console.log('token被其他进程刷新，重新刷新');
+                        wechatApi.updateAccessToken(appId).then(function(data) {
+                            console.log(data);
+                            if (_.isUndefined(data.errcode)) {
+                                utils.set(token, `${data.access_token}`, 7180).then(function(result) {
+        
+                                    if (result == 'OK') {
+                                        resolve(data);
+                                    } else {
+                                        reject({
+                                            "errcode": 100003,
+                                            "errmsg": "redis error"
+                                        });
+                                    }
+        
+                                })
+                            } else {
+                                reject(data);
+                            }
+                        })                        
+                    }
+                })
             } else { //没获取到值--从微信服务器端获取,并往下传递  
                 console.log('redis中无值');
                 wechatApi.updateAccessToken(appId).then(function(data) {
@@ -492,10 +516,7 @@ Common.self_getToken = function(token, appId) {
 
                         })
                     } else {
-                        reject({
-                            "errcode": 100003,
-                            "errmsg": data.errmsg
-                        });
+                        reject(data);
                     }
                 })
 

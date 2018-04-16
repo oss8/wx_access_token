@@ -438,6 +438,29 @@ Common.GetOpenIDFromToken = function(token) {
     }
 }
 
+function updateAccessToken(appId, token, resolve, reject){
+    wechatApi.updateAccessToken(appId).then(function(data) {
+        console.log(data);
+        if (_.isUndefined(data.errcode)) {
+            utils.set(token, `${data.access_token}`, 7180).then(function(result) {
+
+                if (result == 'OK') {
+                    resolve(data);
+                } else {
+                    reject({
+                        "errcode": 100003,
+                        "errmsg": "redis error"
+                    });
+                }
+
+            })
+        } else {
+            reject(data);
+        }
+    })  
+}
+
+
 var configs = require('../../config/config');
 
 Common.self_getToken = function(token, appId) {
@@ -476,49 +499,12 @@ Common.self_getToken = function(token, appId) {
                         resolve(p);            
                     } else {
                         console.log('token被其他进程刷新，重新刷新');
-                        wechatApi.updateAccessToken(appId).then(function(data) {
-                            console.log(data);
-                            if (_.isUndefined(data.errcode)) {
-                                utils.set(token, `${data.access_token}`, 7180).then(function(result) {
-        
-                                    if (result == 'OK') {
-                                        resolve(data);
-                                    } else {
-                                        reject({
-                                            "errcode": 100003,
-                                            "errmsg": "redis error"
-                                        });
-                                    }
-        
-                                })
-                            } else {
-                                reject(data);
-                            }
-                        })                        
+                        updateAccessToken(appId, token, resolve, reject);
                     }
                 })
             } else { //没获取到值--从微信服务器端获取,并往下传递  
                 console.log('redis中无值');
-                wechatApi.updateAccessToken(appId).then(function(data) {
-                    console.log(data);
-                    if (_.isUndefined(data.errcode)) {
-                        utils.set(token, `${data.access_token}`, 7180).then(function(result) {
-
-                            if (result == 'OK') {
-                                resolve(data);
-                            } else {
-                                reject({
-                                    "errcode": 100003,
-                                    "errmsg": "redis error"
-                                });
-                            }
-
-                        })
-                    } else {
-                        reject(data);
-                    }
-                })
-
+                updateAccessToken(appId, token, resolve, reject);
             }
         })
     });

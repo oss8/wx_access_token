@@ -19,6 +19,7 @@
     },
     {
         "wechat": {
+            "weixinID":"gh_9cfecf01c7cd",
             "appID": "wx012a9130903a7396",
             "appSecret": "CB21E40BB6603CE9338BAFC0DB6EF68B",
             "paySecret": "CB21E40BB6603CE9338BAFC0DB6EF68B",

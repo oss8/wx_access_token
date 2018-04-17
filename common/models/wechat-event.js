@@ -7,6 +7,8 @@ module.exports = function(Wechatevent) {
     var _ = require('underscore');
     var configs = require('../../config/config');
     var needle = require('needle');
+    var querystring = require("querystring");
+
     Wechatevent.ValidateWechatEvent = function (req, res, cb) {
 
         var token = 'zhiliankeji9999';
@@ -84,14 +86,13 @@ module.exports = function(Wechatevent) {
         res.write(new Buffer("").toString("UTF-8"));
         res.end();
         
-        
-        
         if (!_.isEmpty(req.body.xml.event)) {
             var _event = req.body.xml.event[0];
             console.log(_event);
-
         }
 
+        var querystr = querystring.stringify(q);
+        console.log(querystr);
         var url = config.wechat.wxEventurl;
         console.log(url);
         needle.post(encodeURI(url), req.body, {

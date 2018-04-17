@@ -2,7 +2,7 @@
     {
         "wechat": {
             "weixinID":"gh_baf26af25e0f",
-            "wxEventurl":"https://0.0.0.0:443/api/weChatEvents/ValidateWechatEvent",
+            "wxEventurl":"https://box.zlian-tech.com/api/weChatEvents/ValidateWechatEvent",
             "appID": "wx13eaa53cf5121bce",
             "appSecret": "3aa9142665bfc96c27cc7c22ee81ecde",
             "paySecret": "3aa9142665bfc96c27cc7c22ee81ecde",

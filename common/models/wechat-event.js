@@ -64,5 +64,50 @@ module.exports = function(Wechatevent) {
             returns: { arg: 'echostr', type: 'number', root: true }
 
         }
+    );   
+    
+    Wechatevent.ValidateWechatEvent = function (req, res, cb) {
+
+        console.log("ValidateWechatEvent Begin")
+        console.log(req.body.xml);
+
+        var q = req.query;
+        var openid = q.openid; //微信加密签名  
+
+        if (!_.isEmpty(req.body.xml.event)) {
+            var _event = req.body.xml.event[0];
+            console.log(_event);
+
+        }
+        else {
+            res.write(new Buffer("").toString("UTF-8"));
+            res.end();
+        }
+
+    };
+
+    Wechatevent.remoteMethod(
+        'ValidateWechatEvent',
+        {
+            http: { verb: 'post' },
+            description: '微信服务器验证',
+            accepts: [{
+                arg: 'req', type: 'object',
+                http: function (ctx) {
+                    return ctx.req;
+                },
+                description: '{"token":""}'
+            },
+            {
+                arg: 'res', type: 'object',
+                http: function (ctx) {
+                    return ctx.res;
+                },
+                description: '{"token":""}'
+            }
+            ],
+            returns: { arg: 'echostr', type: 'number', root: true }
+
+        }
     );    
 };

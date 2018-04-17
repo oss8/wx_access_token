@@ -100,7 +100,6 @@ module.exports = function(Wechatevent) {
             if ( err ){
                 console.log(err);
             }
-            console.log(resp);
         });        
 
     };

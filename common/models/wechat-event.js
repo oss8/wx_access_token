@@ -6,7 +6,7 @@ module.exports = function(Wechatevent) {
     var sha1 = require('sha1');
     var _ = require('underscore');
     var configs = require('../../config/config');
-
+    var needle = require('needle');
     Wechatevent.ValidateWechatEvent = function (req, res, cb) {
 
         var token = 'zhiliankeji9999';

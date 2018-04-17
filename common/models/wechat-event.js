@@ -71,6 +71,7 @@ module.exports = function(Wechatevent) {
         console.log("ValidateWechatEvent Begin")
         console.log(req.body.xml);
 
+        console.log(req.query);
         var q = req.query;
         var openid = q.openid; //微信加密签名  
 

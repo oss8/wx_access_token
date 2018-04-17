@@ -5,7 +5,7 @@ module.exports = function(Wechatevent) {
     app.DisableSystemMethod(Wechatevent);
     var sha1 = require('sha1');
     var _ = require('underscore');
-    
+
     Wechatevent.ValidateWechatEvent = function (req, res, cb) {
 
         var token = 'zhiliankeji9999';
@@ -71,6 +71,12 @@ module.exports = function(Wechatevent) {
 
         console.log("ValidateWechatEvent Begin")
         console.log(req.body.xml);
+        var config = _.find(configs, function(item) {
+            return item.wechat.weixinID == req.body.xml.tousername[0];
+        })
+        
+        console.log('---------------'+config.wechat.appID);
+
 
         console.log(req.query);
         var q = req.query;

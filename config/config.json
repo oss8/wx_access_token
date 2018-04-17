@@ -1,6 +1,7 @@
 [
     {
         "wechat": {
+            "weixinID":"gh_baf26af25e0f",
             "appID": "wx13eaa53cf5121bce",
             "appSecret": "3aa9142665bfc96c27cc7c22ee81ecde",
             "paySecret": "3aa9142665bfc96c27cc7c22ee81ecde",

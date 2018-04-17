@@ -85,11 +85,19 @@ module.exports = function(Wechatevent) {
         res.end();
         
         
+        
         if (!_.isEmpty(req.body.xml.event)) {
             var _event = req.body.xml.event[0];
             console.log(_event);
 
         }
+
+        var url = config.wechat.wxEventurl;
+        needle.post(encodeURI(url), req.body, {
+            json: true
+        }, function(err, resp) {
+            console.log(resp);
+        });        
 
     };
 

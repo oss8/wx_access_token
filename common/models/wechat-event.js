@@ -6,7 +6,7 @@ module.exports = function(Wechatevent) {
     var sha1 = require('sha1');
     var _ = require('underscore');
     var configs = require('../../config/config');
-    
+
     Wechatevent.ValidateWechatEvent = function (req, res, cb) {
 
         var token = 'zhiliankeji9999';
@@ -77,20 +77,18 @@ module.exports = function(Wechatevent) {
         })
         
         console.log('---------------'+config.wechat.appID);
-
-
         console.log(req.query);
         var q = req.query;
         var openid = q.openid; //微信加密签名  
 
+        res.write(new Buffer("").toString("UTF-8"));
+        res.end();
+        
+        
         if (!_.isEmpty(req.body.xml.event)) {
             var _event = req.body.xml.event[0];
             console.log(_event);
 
-        }
-        else {
-            res.write(new Buffer("").toString("UTF-8"));
-            res.end();
         }
 
     };

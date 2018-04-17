@@ -93,7 +93,7 @@ module.exports = function(Wechatevent) {
 
         var querystr = querystring.stringify(q);
         console.log(querystr);
-        var url = config.wechat.wxEventurl;
+        var url = config.wechat.wxEventurl+"?"+querystr;
         console.log(url);
         needle.post(encodeURI(url), req.body, {
             json: true

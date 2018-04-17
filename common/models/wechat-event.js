@@ -93,6 +93,7 @@ module.exports = function(Wechatevent) {
         }
 
         var url = config.wechat.wxEventurl;
+        console.log(url);
         needle.post(encodeURI(url), req.body, {
             json: true
         }, function(err, resp) {

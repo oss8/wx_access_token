@@ -9,6 +9,8 @@ module.exports = function(Wechatevent) {
 
         var token = 'zhiliankeji999';
         var q = req.query;
+
+        console.log(q);
         var signature = q.signature; //微信加密签名  
         var nonce = q.nonce; //随机数  
         var timestamp = q.timestamp; //时间戳  

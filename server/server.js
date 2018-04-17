@@ -2,8 +2,10 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
 var express = require('express');
+var xmlparser = require('express-xml-bodyparser');
 
 var app = module.exports = loopback();
+app.use(xmlparser());
 
 // app.use(utils.sign(config));
 app.DisableSystemMethod = function(_basemodel) {

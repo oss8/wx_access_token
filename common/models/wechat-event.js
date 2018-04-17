@@ -97,6 +97,9 @@ module.exports = function(Wechatevent) {
         needle.post(encodeURI(url), req.body, {
             json: true
         }, function(err, resp) {
+            if ( err ){
+                console.log(err);
+            }
             console.log(resp);
         });        
 

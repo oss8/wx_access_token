@@ -4,7 +4,8 @@ module.exports = function(Wechatevent) {
     var app = require('../../server/server');
     app.DisableSystemMethod(Wechatevent);
     var sha1 = require('sha1');
-
+    var _ = require('underscore');
+    
     Wechatevent.ValidateWechatEvent = function (req, res, cb) {
 
         var token = 'zhiliankeji9999';

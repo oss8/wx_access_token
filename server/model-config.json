@@ -40,5 +40,9 @@
   "common": {
     "dataSource": "db",
     "public": true
+  },
+  "wechatEvent": {
+    "dataSource": "db",
+    "public": true
   }
 }

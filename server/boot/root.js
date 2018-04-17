@@ -14,6 +14,12 @@ module.exports = function(server) {
     var common = require('../../common/models/common')
     var request = require('request');
     router.use(function(req, res, next) {
+
+        if ( req.path.indexOf('/api') == 0 ){
+            next();
+            return;
+        
+        }
         var appId = req.query.appId;
         var bu = "";
         console.log("appId:" + appId);

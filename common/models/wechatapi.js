@@ -1,5 +1,4 @@
 
-
 var wechatApi = {};
 var configs = require('../../config/config');
 var utils = require('./utils');

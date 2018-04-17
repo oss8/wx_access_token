@@ -7,7 +7,7 @@ module.exports = function(Wechatevent) {
 
     Wechatevent.ValidateWechatEvent = function (req, res, cb) {
 
-        var token = 'zhiliankeji999';
+        var token = 'zhiliankeji9999';
         var q = req.query;
 
         console.log(q);
@@ -35,7 +35,7 @@ module.exports = function(Wechatevent) {
 
         } else {
             res.writeHeader(200, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-            res.write(new Buffer("false").toString("UTF-8"));
+            res.write(new Buffer(echostr).toString("UTF-8"));
             res.end();
             console.log('Send OK');
         }

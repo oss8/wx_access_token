@@ -208,7 +208,7 @@ module.exports = function(server) {
 
         //var callback = "http://" + req.headers.host + "/wechat_callback?bu="+str;
         var callback = config.wechat.wechat_callback + querystring.stringify({ appId: appId + "_" + str });
-        var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+encodeURI(callback)+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+        var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+encodeURI(callback)+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 
         res.setHeader('Location', url);
         res.writeHead(302);

@@ -27,7 +27,7 @@
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "threeToken": "",
             "token": "maomaochong-tech",
-            "mch_id": 1501531441,
+            "mch_id": 1503851451,
             "wechat_callback":"http://w.zlian-tech.com/wechat_callback?",
             "alipay":{
                 "aliAppID":2017082308338778,

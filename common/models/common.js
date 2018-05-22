@@ -256,6 +256,7 @@ Common.CreateOrders = function(res, req, config) {
                 console.log(err);
                 res.send(err)
             } else {
+                console.log(result);
                 res.send(result);
             }
 

@@ -69,7 +69,7 @@ module.exports = function(Wechatevent) {
 
         }
     );   
-    
+/*
     Wechatevent.ValidateWechatEvent = function (req, res, cb) {
 
         console.log("ValidateWechatEvent Begin")
@@ -128,5 +128,6 @@ module.exports = function(Wechatevent) {
             returns: { arg: 'echostr', type: 'number', root: true }
 
         }
-    );    
+    );  
+*/  
 };

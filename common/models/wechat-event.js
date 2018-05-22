@@ -48,7 +48,7 @@ module.exports = function(Wechatevent) {
     Wechatevent.remoteMethod(
         'ValidateWechatEvent',
         {
-            http: { verb: 'post' },
+            http: { verb: 'get' },
             description: '微信服务器验证',
             accepts: [{
                 arg: 'req', type: 'object',
@@ -108,7 +108,7 @@ module.exports = function(Wechatevent) {
     Wechatevent.remoteMethod(
         'ValidateWechatEvent',
         {
-            http: { verb: 'get' },
+            http: { verb: 'post' },
             description: '微信服务器验证',
             accepts: [{
                 arg: 'req', type: 'object',

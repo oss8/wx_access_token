@@ -23,7 +23,7 @@
             "wxEventurl":"https://box.zlian-tech.com/api/weChatEvents/ValidateWechatEvent",
             "appID": "wx89084bb951178075",
             "appSecret": "a2d563e562ad898bac75ff87e03e47ef",
-            "paySecret": "3aa9142665bfc96c27cc7c22ee81ecde",
+            "paySecret": "a2d563e562ad898bac75ff87e03e47ef",
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "threeToken": "",
             "token": "maomaochong-tech",

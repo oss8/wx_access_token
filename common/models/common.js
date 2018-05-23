@@ -241,7 +241,7 @@ Common.CreateOrders = function(res, req, config) {
             }
         });
     } else {
-        fee = 1;
+
         console.log('JSAPI paymode')
         wxpay.getBrandWCPayRequestParams({
             openid: req.query.openid,

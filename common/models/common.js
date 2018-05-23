@@ -242,18 +242,6 @@ Common.CreateOrders = function(res, req, config) {
         });
     } else {
         console.log('JSAPI paymode')
-        var _tmp = {
-            openid: req.query.openid,
-            body: '支付',
-            detail: '公众号支付',
-            out_trade_no: _out_trade_no,
-            total_fee: fee,
-            spbill_create_ip: getIPAdress(),
-            notify_url: notifyurl
-        };
-
-        console.log( _tmp);
-        
         wxpay.getBrandWCPayRequestParams({
             openid: req.query.openid,
             body: '支付',
@@ -269,6 +257,7 @@ Common.CreateOrders = function(res, req, config) {
                 res.send(err)
             } else {
                 console.log(result);
+                result.out_trade_no = _out_trade_no;
                 res.send(result);
             }
 

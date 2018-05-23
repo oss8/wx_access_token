@@ -259,6 +259,7 @@ Common.CreateOrders = function(res, req, config) {
             } else {
                 console.log(result);
                 result.out_trade_no = _out_trade_no;
+                result.openid = req.query.openid;
                 res.send(result);
             }
 

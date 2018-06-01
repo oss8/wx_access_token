@@ -42,5 +42,13 @@
             "prefix": "https://api.weixin.qq.com/cgi-bin/",
             "token": "zhilian-tech-minproject"
         }
-    }    
+    },
+    {
+        "wechat": {
+            "appID": "wx9526649d3c8cb14d",
+            "appSecret": "f6271f2e1af7108a79c1ca619e84dabe",
+            "prefix": "https://api.weixin.qq.com/cgi-bin/",
+            "token": "maomaochong-minproject"
+        }
+    }     
 ]

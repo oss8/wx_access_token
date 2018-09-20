@@ -173,7 +173,7 @@ module.exports = function(server) {
                 if (_.isUndefined(body.errcode)) {
 
                     common.self_getToken(config.wechat.token, appId).then(function(data) {
-                        common.self_getNickNameByToken(res, body.access_token, body.openid).then(function(token){
+                        common.self_getNickNameByToken(res, data.access_token, body.openid).then(function(token){
                             console.log(token);
                             var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + _state;
                             console.log(url);

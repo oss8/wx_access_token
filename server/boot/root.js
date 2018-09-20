@@ -206,7 +206,9 @@ module.exports = function(server) {
         var appId = req.query.appId;
         var str = req.query.bu
         var scope = req.query.scope;
-
+        if ( _.isUndefined(scope)) {
+            scope = 'snsapi_base';
+        }
         //var callback = "http://" + req.headers.host + "/wechat_callback?bu="+str;
         var callback = config.wechat.wechat_callback + querystring.stringify({ appId: appId + "_" + str });
         var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+encodeURI(callback)+"&response_type=code&scope="+scope+"&state=STATE#wechat_redirect";

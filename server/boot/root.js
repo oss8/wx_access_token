@@ -169,7 +169,7 @@ module.exports = function(server) {
 
             if (!error && resp.statusCode == 200) {
                 var body = JSON.parse(json);
-                //console.log(body);
+                console.log(body);
                 if (_.isUndefined(body.errcode)) {
 
                     common.self_getToken(config.wechat.token, appId).then(function(data) {

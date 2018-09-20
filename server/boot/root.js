@@ -220,7 +220,7 @@ module.exports = function(server) {
         var str = req.query.bu
         var scope = req.query.scope;
         if ( _.isUndefined(scope)) {
-            scope = 'snsapi_base';
+            scope = 'snsapi_userinfo';
         }
         //var callback = "http://" + req.headers.host + "/wechat_callback?bu="+str;
         var callback = config.wechat.wechat_callback + querystring.stringify({ appId: appId + "_" + str });

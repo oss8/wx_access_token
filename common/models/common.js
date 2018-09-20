@@ -589,6 +589,27 @@ Common.self_getNickNameByToken = function(res, access_token, openId) {
     });
 }
 
+Common.self_getNickNameByToken2 = function(res, access_token, openId) {
+    return new Promise(function(resolve, reject) {
+        request('https://api.weixin.qq.com/sns/userinfo?access_token=' + access_token + "&openid=" + openId + "&lang=zh_CN", function(error, resp, json) {
+
+            if (!error && resp.statusCode == 200) {
+                var body = JSON.parse(json);
+                console.log(body);
+                if (_.isUndefined(body.errcode)) {
+                    Common.GetTokenFromOpenID(body).then(function(data) {
+                        resolve(data);
+                    });
+                } else {
+                    reject(body);
+                }
+
+            } else {
+                reject(error);
+            }
+        })
+    });
+}
 
 Common.self_getTicket = function(res, access_token, url, appId) {
 

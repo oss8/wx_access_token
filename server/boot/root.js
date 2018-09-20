@@ -171,8 +171,24 @@ module.exports = function(server) {
                 var body = JSON.parse(json);
                 console.log(body);
                 if (_.isUndefined(body.errcode)) {
-
-                    //common.self_getToken(config.wechat.token, appId).then(function(data) {
+                    if ( body.scope == 'snsapi_base'){
+                        common.self_getToken(config.wechat.token, appId).then(function(data) {
+                            common.self_getNickNameByToken2(res, body.access_token, body.openid).then(function(token){
+                                console.log(token);
+                                var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + _state;
+                                console.log(url);
+                                res.setHeader('Location', url);
+                                res.writeHead(302);
+                                res.end();
+    
+                            }, function(err) {
+                                res.send(err);
+                            });                
+                        },function(err){
+                            res.send(err);
+                        }); 
+                    }
+                    else{
                         common.self_getNickNameByToken2(res, body.access_token, body.openid).then(function(token){
                             console.log(token);
                             var url = bu + (bu.indexOf('?') > 0 ? "&" : "?") + querystring.stringify({ token: token }) + "&status=" + _state;
@@ -183,11 +199,8 @@ module.exports = function(server) {
 
                         }, function(err) {
                             res.send(err);
-                        });                
-                    // },function(err){
-                    //     res.send(err);
-                    // });                  
-
+                        }); 
+                    }
                 } else {
                     res.send(body);
                 }
